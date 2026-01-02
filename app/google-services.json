@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "274352731560",
+    "project_id": "hotel-finder-5f57e",
+    "storage_bucket": "hotel-finder-5f57e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274352731560:android:7db590d5d0d7fbc116599d",
+        "android_client_info": {
+          "package_name": "com.example.hotelfinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr6o8R46u_lpsOhDK9_fm8DCyaLOUAfZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
