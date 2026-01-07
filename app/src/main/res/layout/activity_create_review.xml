@@ -1,49 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
-        <ImageView
-            android:id="@+id/imgReviewPreview"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:scaleType="centerCrop"
-            android:background="#F0F0F0"
-            android:src="@drawable/ic_launcher_background" />
-
-        <Button
-            android:id="@+id/btnSelectImage"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Photo (Camera/Gallery)" />
+            android:layout_marginBottom="32dp">
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_back_button" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Review"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#333333" />
+        </RelativeLayout>
 
-        <RatingBar
-            android:id="@+id/ratingCreate"
+        <View
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/rounded_button" />
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp" />
+            android:text="Hotel"
+            android:layout_marginTop="12dp"
+            android:textSize="16sp"
+            android:textColor="#555555" />
 
-        <EditText
-            android:id="@+id/etReviewComment"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tell us about your stay..."
-            android:minLines="3"
+            android:text="How was your stay?"
+            android:layout_marginTop="32dp"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/hotelRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:progressTint="#E98229"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Photo"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/imgSlot1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_edittext"
+                android:padding="20dp"
+                android:src="@drawable/rounded_button" />
+            <ImageView
+                android:id="@+id/imgSlot2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_edittext"
+                android:padding="20dp"
+                android:src="@drawable/rounded_button" />
+            <ImageView
+                android:id="@+id/imgSlot3"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@drawable/rounded_edittext"
+                android:padding="20dp"
+                android:src="@drawable/rounded_button" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Comment"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editReviewText"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_edittext"
             android:gravity="top"
-            android:layout_marginTop="15dp" />
+            android:padding="12dp"
+            android:hint="Type text here"
+            android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btnPostReview"
+            android:id="@+id/btnSubmitReview"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Post Review"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="#2196F3" />
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:text="Submit review"
+            android:backgroundTint="#D4EF70"
+            android:textColor="#222222"
+            android:textAllCaps="false"
+            android:fontFamily="sans-serif-medium" />
+
     </LinearLayout>
 </ScrollView>
