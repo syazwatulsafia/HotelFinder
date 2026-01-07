@@ -3,6 +3,7 @@ package com.example.hotelfinder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +20,7 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
     TextView profileText;
+    Button btnGotoReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +34,20 @@ public class ProfileActivity extends AppCompatActivity {
         });
         auth = FirebaseAuth.getInstance();
         profileText = (TextView)findViewById(R.id.textView);
+        View btnGoToReview = findViewById(R.id.btnGoToReview);
 
         user = auth.getCurrentUser();
-        profileText.setText(user.getEmail());
+        if (user != null) {
+            profileText.setText(user.getEmail());
+        }
+
+        btnGoToReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, CreateReviewActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void signout(View v){
