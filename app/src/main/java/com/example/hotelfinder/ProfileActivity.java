@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -47,6 +48,12 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, CreateReviewActivity.class);
                 startActivity(intent);
             }
+        });
+
+        MaterialButton btnTeam = findViewById(R.id.btnTeam);
+        btnTeam.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, TeamActivity.class);
+            startActivity(intent);
         });
     }
 

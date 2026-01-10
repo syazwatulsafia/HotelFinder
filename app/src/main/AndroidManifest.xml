@@ -19,6 +19,9 @@
         android:theme="@style/Theme.HotelFinder"
         tools:targetApi="31">
         <activity
+            android:name=".TeamActivity"
+            android:exported="false" />
+        <activity
             android:name=".ReviewSuccessActivity"
             android:exported="false" />
         <activity
@@ -32,7 +35,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity android:name=".CreateReviewActivity" />
         <activity
             android:name=".SplashActivity"
