@@ -55,6 +55,12 @@ public class ProfileActivity extends AppCompatActivity {
             Intent intent = new Intent(ProfileActivity.this, TeamActivity.class);
             startActivity(intent);
         });
+
+        MaterialButton btnAboutUs = findViewById(R.id.btnAboutUs);
+        btnAboutUs.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, AboutUsActivity.class);
+            startActivity(intent);
+        });
     }
 
     public void signout(View v){
