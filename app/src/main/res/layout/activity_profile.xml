@@ -1,54 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF6F3"
+    android:padding="24dp"
     tools:context=".ProfileActivity">
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="218dp"
+        android:layout_marginTop="160dp"
         android:text="WELCOME!"
+        android:textColor="#D1BB9B"
         android:textSize="32sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        android:text="User Email/Name"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <Button
-        android:id="@+id/btnGoToReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="WRITE A REVIEW"
-        android:backgroundTint="#4CAF50"
+        android:layout_marginTop="48dp"
+        android:alpha="0.8"
+        android:text="User Email/Name"
+        android:textColor="#333333"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMaps"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="204dp"
+        android:layout_marginEnd="8dp"
+        android:text="MAPS"
+        android:textColor="#333333"
+        app:backgroundTint="#E8DFD1"
+        app:icon="@android:drawable/ic_dialog_map"
+        app:iconGravity="top"
+        app:iconSize="48dp"
+        app:iconTint="#D1BB9B"
+        app:layout_constraintEnd_toStartOf="@+id/btnGoToReview"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGoToReview"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="8dp"
+        android:text="WRITE REVIEW"
+        android:textColor="#333333"
+        app:backgroundTint="#E8DFD1"
+        app:icon="@android:drawable/ic_menu_edit"
+        app:iconGravity="top"
+        app:iconSize="48dp"
+        app:iconTint="#E57373"
+        app:layout_constraintBottom_toBottomOf="@+id/btnMaps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnMaps"
+        app:layout_constraintTop_toTopOf="@+id/btnMaps"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAboutUs"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="8dp"
+        android:text="ABOUT US"
+        android:textColor="#333333"
+        app:backgroundTint="#DAE6E7"
+        app:icon="@android:drawable/ic_dialog_info"
+        app:iconGravity="top"
+        app:iconSize="40dp"
+        app:iconTint="#759EA5"
+        app:layout_constraintEnd_toStartOf="@+id/btnTeam"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnMaps" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTeam"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="8dp"
+        android:text="TEAM"
+        android:textColor="#333333"
+        app:backgroundTint="#DAE6E7"
+        app:icon="@android:drawable/ic_menu_my_calendar"
+        app:iconGravity="top"
+        app:iconSize="40dp"
+        app:iconTint="#759EA5"
+        app:layout_constraintBottom_toBottomOf="@+id/btnAboutUs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnAboutUs"
+        app:layout_constraintTop_toTopOf="@+id/btnAboutUs"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/button4"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
         android:onClick="signout"
         android:text="LOG OUT"
+        android:textColor="#333333"
+        android:alpha="0.6"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGoToReview" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
