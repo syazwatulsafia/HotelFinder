@@ -61,8 +61,14 @@ public class ProfileActivity extends AppCompatActivity {
             Intent intent = new Intent(ProfileActivity.this, AboutUsActivity.class);
             startActivity(intent);
         });
+        //map add (here)
+        Button btnOpenMap = findViewById(R.id.btnMaps);
+        //map add (here)
+        btnOpenMap.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, MapsActivity.class);
+            startActivity(intent);
+        });
     }
-
     public void signout(View v){
         auth.signOut();
         finish();
