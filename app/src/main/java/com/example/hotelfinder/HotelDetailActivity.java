@@ -17,8 +17,8 @@ public class HotelDetailActivity extends AppCompatActivity {
 
         TextView txtName = findViewById(R.id.txtName);
         TextView txtAddress = findViewById(R.id.txtAddress);
+        TextView txtWebsite = findViewById(R.id.txtWebsite);
         Button btnCall = findViewById(R.id.btnCall);
-        Button btnWebsite = findViewById(R.id.btnWebsite);
         Button btnNavigate = findViewById(R.id.btnNavigate);
 
         String name = getIntent().getStringExtra("name");
@@ -29,14 +29,21 @@ public class HotelDetailActivity extends AppCompatActivity {
         txtName.setText(name);
         txtAddress.setText(address);
 
+        // CALL
         btnCall.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_DIAL,
                         Uri.parse("tel:0123456789"))));
 
-        btnWebsite.setOnClickListener(v ->
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://www.google.com/search?q=" + name))));
+        // WEBSITE (HYPERLINK)
+        String websiteUrl = "https://www.google.com/search?q=" + name;
+        txtWebsite.setText("Visit website");
 
+        txtWebsite.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl));
+            startActivity(intent);
+        });
+
+        // NAVIGATION
         btnNavigate.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW,
                         Uri.parse("google.navigation:q=" + lat + "," + lng))));
