@@ -1,8 +1,8 @@
 package com.example.hotelfinder;
 
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ReviewSuccessActivity extends AppCompatActivity {
@@ -12,20 +12,19 @@ public class ReviewSuccessActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_success);
 
-        // 🔹 2 Second Delay Logic
-        // After 2000ms (2 seconds), the activity will finish and return
-        // the user to the previous screen (likely the Hotel Detail or Home).
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, 2000);
-    }
+        VideoView videoView = findViewById(R.id.success);
 
-    @Override
-    public void onBackPressed() {
-        // Optional: Disable back button during the 2-second success animation
-        super.onBackPressed();
+        // Path to your video in res/raw
+        String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.success;
+        Uri uri = Uri.parse(videoPath);
+        videoView.setVideoURI(uri);
+
+        // Start playing
+        videoView.start();
+
+        // Automatically close the screen when the video is done
+        videoView.setOnCompletionListener(mp -> {
+            finish();
+        });
     }
 }
