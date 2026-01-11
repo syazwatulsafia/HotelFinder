@@ -1,22 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="#FEF5F2"
-    android:padding="24dp">
+    android:padding="32dp">
 
     <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/logo_zoomed"/>
+        android:id="@+id/imgThumbsUp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@android:drawable/ic_menu_preferences"
+        android:contentDescription="Success"
+        android:layout_marginBottom="24dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thank you for your feedback!"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"/>
+        android:text="review sent"
+        android:textSize="28sp"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="thank you for your feedback"
+        android:textSize="20sp"
+        android:textColor="#555555"
+        android:layout_marginTop="8dp"
+        android:gravity="center" />
 
 </LinearLayout>

@@ -1,79 +1,221 @@
 package com.example.hotelfinder;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.*;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CreateReviewActivity extends AppCompatActivity {
 
-    RatingBar ratingBar;
-    TextView txtRatingMessage;
-    EditText editReview;
-    Button btnSubmit;
+    private RatingBar ratingBar;
+    private EditText editReview;
+    private Button btnSubmit, btnOpenSearch;
+    private ImageView btnBack, imgHotel, img1, img2, img3;
+    private TextView txtHotelName, txtHotelAddress;
 
-    ImageView img1, img2, img3;
-    int imageCount = 0;
+    private int imageCount = 0;
+    private Uri cameraImageUri;
+    private String hotelName, hotelAddress;
 
-    ActivityResultLauncher<String> imagePicker;
+    private ActivityResultLauncher<String> galleryLauncher;
+    private ActivityResultLauncher<Intent> cameraLauncher;
+    private ActivityResultLauncher<Intent> autocompleteLauncher;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
+    private FirebaseFirestore db;
+    private PlacesClient placesClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_review);
 
-        ratingBar = findViewById(R.id.hotelRatingBar);
-        editReview = findViewById(R.id.editReviewText);
-        btnSubmit = findViewById(R.id.btnSubmitReview);
+        db = FirebaseFirestore.getInstance();
 
-        img1 = findViewById(R.id.imgSlot1);
-        img2 = findViewById(R.id.imgSlot2);
-        img3 = findViewById(R.id.imgSlot3);
+        // 🔹 Initialize Places (Replace with your actual API Key)
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "AIzaSyBKpSvu4pYLp6Jh1PPbBr6HFPstRUzhnCU");
+        }
+        placesClient = Places.createClient(this);
 
-        // ⭐ Rating listener
-        ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-            txtRatingMessage.setVisibility(View.VISIBLE);
-            txtRatingMessage.setText("Wowww, you rated " + (int) rating + " stars!!!");
-        });
+        initViews();
+        setupLaunchers();
 
-        // 📸 Image picker
-        imagePicker = registerForActivityResult(
-                new ActivityResultContracts.GetContent(),
-                uri -> {
-                    if (uri != null) setImage(uri);
-                });
+        btnBack.setOnClickListener(v -> finish());
+        btnOpenSearch.setOnClickListener(v -> startGoogleSearch());
 
-        View.OnClickListener imageClick = v -> imagePicker.launch("image/*");
+        // Click logic for the three small image slots
+        View.OnClickListener addPhotoClick = v -> checkPermissionAndShowDialog();
+        img1.setOnClickListener(addPhotoClick);
+        img2.setOnClickListener(addPhotoClick);
+        img3.setOnClickListener(addPhotoClick);
 
-        img1.setOnClickListener(imageClick);
-        img2.setOnClickListener(imageClick);
-        img3.setOnClickListener(imageClick);
-
-        // ✅ Submit review
         btnSubmit.setOnClickListener(v -> submitReview());
     }
 
-    private void setImage(Uri uri) {
-        if (imageCount == 0) img1.setImageURI(uri);
-        else if (imageCount == 1) img2.setImageURI(uri);
-        else if (imageCount == 2) img3.setImageURI(uri);
+    private void initViews() {
+        btnBack = findViewById(R.id.btnBack);
+        btnOpenSearch = findViewById(R.id.btnOpenSearch);
+        imgHotel = findViewById(R.id.imgHotel);
+        txtHotelName = findViewById(R.id.txtHotelName);
+        txtHotelAddress = findViewById(R.id.txtHotelAddress);
+        ratingBar = findViewById(R.id.hotelRatingBar);
+        editReview = findViewById(R.id.editReviewText);
+        btnSubmit = findViewById(R.id.btnSubmitReview);
+        img1 = findViewById(R.id.imgSlot1);
+        img2 = findViewById(R.id.imgSlot2);
+        img3 = findViewById(R.id.imgSlot3);
+    }
 
-        imageCount++;
+    private void setupLaunchers() {
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                uri -> { if (uri != null) handleImageSelection(uri); });
+
+        cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> { if (result.getResultCode() == RESULT_OK) handleImageSelection(cameraImageUri); });
+
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) showImageSourceDialog();
+                    else Toast.makeText(this, "Permission denied. Cannot use camera.", Toast.LENGTH_SHORT).show();
+                });
+
+        autocompleteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Place place = Autocomplete.getPlaceFromIntent(result.getData());
+                        hotelName = place.getName();
+                        hotelAddress = place.getAddress();
+
+                        // 🔹 1. Set the text
+                        txtHotelName.setText(hotelName);
+                        txtHotelAddress.setText(hotelAddress);
+
+                        // 🔹 2. Make them VISIBLE
+                        imgHotel.setVisibility(View.VISIBLE);
+                        txtHotelName.setVisibility(View.VISIBLE);
+                        txtHotelAddress.setVisibility(View.VISIBLE);
+
+                        // 🔹 3. Fetch the photo
+                        if (place.getPhotoMetadatas() != null && !place.getPhotoMetadatas().isEmpty()) {
+                            fetchHotelPhoto(place.getPhotoMetadatas().get(0));
+                        } else {
+                            // If no photo exists, show a placeholder
+                            imgHotel.setImageResource(android.R.drawable.ic_menu_gallery);
+                        }
+                    }
+                });
+    }
+
+    private void startGoogleSearch() {
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.PHOTO_METADATAS);
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setTypesFilter(Arrays.asList("establishment"))
+                .build(this);
+        autocompleteLauncher.launch(intent);
+    }
+
+    private void fetchHotelPhoto(PhotoMetadata photoMetadata) {
+        FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                .setMaxWidth(800)
+                .setMaxHeight(500)
+                .build();
+        placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+            imgHotel.setImageBitmap(fetchPhotoResponse.getBitmap());
+        });
+    }
+
+    private void checkPermissionAndShowDialog() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            showImageSourceDialog();
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+    }
+
+    private void showImageSourceDialog() {
+        if (imageCount >= 3) {
+            Toast.makeText(this, "Maximum 3 photos reached", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String[] options = {"Take Photo", "Choose from Gallery"};
+        new AlertDialog.Builder(this)
+                .setTitle("Add Photo")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) openCamera();
+                    else galleryLauncher.launch("image/*");
+                }).show();
+    }
+
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Review Picture");
+        cameraImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+        cameraLauncher.launch(intent);
+    }
+
+    private void handleImageSelection(Uri uri) {
+        ImageView[] slots = {img1, img2, img3};
+        if (imageCount < 3) {
+            slots[imageCount].setImageURI(uri);
+            slots[imageCount].setPadding(0, 0, 0, 0);
+            slots[imageCount].setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageCount++;
+        }
     }
 
     private void submitReview() {
-        if (ratingBar.getRating() == 0) {
-            Toast.makeText(this, "Please give a rating", Toast.LENGTH_SHORT).show();
+        if (hotelName == null) {
+            Toast.makeText(this, "Please search for a hotel first", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Intent intent = new Intent(this, ReviewSuccessActivity.class);
-        startActivity(intent);
-        finish();
+        btnSubmit.setEnabled(false);
+        Map<String, Object> review = new HashMap<>();
+        review.put("hotelName", hotelName);
+        review.put("hotelAddress", hotelAddress);
+        review.put("rating", ratingBar.getRating());
+        review.put("comment", editReview.getText().toString());
+        review.put("timestamp", System.currentTimeMillis());
+
+        db.collection("reviews").add(review)
+                .addOnSuccessListener(doc -> {
+                    Intent intent = new Intent(this, ReviewSuccessActivity.class);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    btnSubmit.setEnabled(true);
+                    Toast.makeText(this, "Failed to submit review", Toast.LENGTH_SHORT).show();
+                });
     }
 }
