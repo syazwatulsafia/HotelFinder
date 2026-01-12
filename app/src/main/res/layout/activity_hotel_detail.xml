@@ -1,130 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFF6F3"
+    android:fillViewport="true">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- 🔹 TOP BAR -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#FFFFFF"
-            android:elevation="4dp">
+            android:layout_height="64dp"
+            android:paddingHorizontal="16dp"
+            android:background="#FFF6F3">
 
             <ImageView
                 android:id="@+id/btnBack"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentStart="true"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_back_button" />
+                android:padding="4dp"
+                android:src="@drawable/ic_back_button"
+                app:tint="#000000" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hotel Details"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"
+                android:fontFamily="sans-serif-medium"
+                android:text="Details"
+                android:textAllCaps="true"
+                android:letterSpacing="0.1"
+                android:textColor="#000000"
+                android:textSize="14sp" />
         </RelativeLayout>
 
-        <!-- HOTEL IMAGE -->
-        <ImageView
-            android:id="@+id/imgHotel"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="320dp"
-            android:scaleType="centerCrop"
-            android:background="#DDDDDD" />
+            app:cardElevation="0dp">
 
-        <!-- NAME + RATING ROW -->
+            <ImageView
+                android:id="@+id/imgHotel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F0EAE8"
+                android:scaleType="centerCrop" />
+        </androidx.cardview.widget.CardView>
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <TextView
-                android:id="@+id/txtName"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-black"
+                    android:text="The Grand Hotel"
+                    android:textColor="#000000"
+                    android:textSize="26sp" />
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/txtRating"
+                android:id="@+id/txtAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:alpha="0.7"
+                android:fontFamily="sans-serif"
+                android:text="123 Luxury Ave, Kuala Lumpur"
+                android:textColor="#000000"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtWebsite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⭐ 4.5"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingStart="8dp" />
-        </LinearLayout>
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="sans-serif-medium"
+                android:text="Visit Official Website"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:background="?attr/selectableItemBackground" />
 
-        <!-- ADDRESS -->
-        <TextView
-            android:id="@+id/txtAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingTop="8dp" />
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="24dp"
+                android:background="#000000" />
 
-        <!-- WEBSITE -->
-        <TextView
-            android:id="@+id/txtWebsite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#0066CC"
-            android:paddingTop="6dp"
-            android:clickable="true"
-            android:focusable="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:text="RESERVATIONS"
+                android:textSize="12sp"
+                android:letterSpacing="0.1"
+                android:textColor="#000000" />
 
-        <!-- BUTTON ROW -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCall"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#000000"
+                    android:text="CALL HOTEL"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="4dp" />
+
+                <Button
+                    android:id="@+id/btnNavigate"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#000000"
+                    android:text="MAPS"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="4dp" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/btnCall"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#E8DFD1"
-                android:text="Call" />
+                android:id="@+id/btnSeeReview"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="VIEW GUEST REVIEWS"
+                android:textColor="#000000"
+                app:cornerRadius="4dp"
+                app:strokeColor="#000000"
+                app:strokeWidth="2dp" />
 
-            <Button
-                android:id="@+id/btnNavigate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Navigate"
-                android:layout_marginStart="8dp"
-                android:backgroundTint="#E8DFD1"/>
         </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btnSeeReview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="#E8DFD1"
-            android:text="Hotel Reviews" />
-
-    </LinearLayout>
     </LinearLayout>
 </ScrollView>
