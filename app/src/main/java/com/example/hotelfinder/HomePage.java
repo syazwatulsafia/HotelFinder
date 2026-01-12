@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -24,6 +25,12 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_page);
+        MaterialButton btnFindHotels = findViewById(R.id.btnFindHotels);
+
+        btnFindHotels.setOnClickListener(v -> {
+            startActivity(new Intent(HomePage.this, MapsActivity.class));
+        });
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -47,7 +54,7 @@ public class HomePage extends AppCompatActivity {
 
                 if (!name.isEmpty()) {
                     name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                    welcomeTitle.setText("Welcome back, " + name + "!");
+                    welcomeTitle.setText( name + "!");
                 }
             }
         }
