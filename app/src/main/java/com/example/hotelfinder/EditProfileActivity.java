@@ -85,37 +85,42 @@ public class EditProfileActivity extends AppCompatActivity {
         String newEmail = edtEmail.getText().toString().trim();
         String newPassword = edtPassword.getText().toString().trim();
 
-        if (newEmail.isEmpty()) {
-            Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // 🔹 UPDATE EMAIL (if changed)
+        // 🔹 1. Update EMAIL (optional)
         if (!newEmail.equals(user.getEmail())) {
             user.updateEmail(newEmail)
+                    .addOnSuccessListener(unused ->
+                            Toast.makeText(this, "Email updated", Toast.LENGTH_SHORT).show()
+                    )
                     .addOnFailureListener(e ->
-                            Toast.makeText(this, "Email update failed: login again", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "Email update failed. Login again.", Toast.LENGTH_LONG).show()
                     );
         }
 
-        // 🔹 UPDATE PASSWORD (if filled)
+        // 🔹 2. Update PASSWORD (ONLY if user typed one)
         if (!newPassword.isEmpty()) {
+
             if (newPassword.length() < 6) {
                 Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                return;
+                // ❌ DO NOT return — allow photo update
+            } else {
+                user.updatePassword(newPassword)
+                        .addOnSuccessListener(unused ->
+                                Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show()
+                        )
+                        .addOnFailureListener(e ->
+                                Toast.makeText(this, "Password update failed. Login again.", Toast.LENGTH_LONG).show()
+                        );
             }
-            user.updatePassword(newPassword)
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Password update failed: login again", Toast.LENGTH_LONG).show()
-                    );
         }
 
-        // 🔹 UPDATE PHOTO
+        // 🔹 3. Update PHOTO (independent from password)
         if (imageUri != null) {
             StorageReference ref = storageRef.child(user.getUid() + ".jpg");
             ref.putFile(imageUri)
                     .continueWithTask(task -> ref.getDownloadUrl())
-                    .addOnSuccessListener(uri -> saveUserToFirestore(newEmail, uri.toString()));
+                    .addOnSuccessListener(uri ->
+                            saveUserToFirestore(newEmail, uri.toString())
+                    );
         } else {
             saveUserToFirestore(newEmail, null);
         }
@@ -125,14 +130,16 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Map<String, Object> map = new HashMap<>();
         map.put("email", email);
+
         if (photoUrl != null) {
             map.put("photoUrl", photoUrl);
         }
 
-        db.collection("users").document(user.getUid())
+        db.collection("users")
+                .document(user.getUid())
                 .set(map, SetOptions.merge())
                 .addOnSuccessListener(unused -> {
-                    Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
                     finish();
                 });
     }

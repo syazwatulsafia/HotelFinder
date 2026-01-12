@@ -2,11 +2,12 @@ package com.example.hotelfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,16 +15,14 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    ImageView imgUser;
-    TextView txtEmail;
-    Button btnEditProfile;
+    ImageView imgUser, btnMenu;
+    TextView txtEmail, txtReviewCount;
     RecyclerView recyclerReviews;
 
     FirebaseAuth auth;
@@ -37,13 +36,12 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        // 🔹 Bind views
         imgUser = findViewById(R.id.imgUser);
+        btnMenu = findViewById(R.id.btnMenu);
         txtEmail = findViewById(R.id.txtEmail);
-        btnEditProfile = findViewById(R.id.btnEditProfile);
+        txtReviewCount = findViewById(R.id.txtReviewCount);
         recyclerReviews = findViewById(R.id.recyclerReviews);
 
-        // 🔹 Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -55,21 +53,56 @@ public class UserProfileActivity extends AppCompatActivity {
 
         txtEmail.setText(user.getEmail());
 
-        // 🔹 RecyclerView setup
-        adapter = new ReviewAdapter(reviewList, this);
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ReviewAdapter(reviewList, this);
         recyclerReviews.setAdapter(adapter);
 
-        loadUserProfile(user.getUid());
-        loadUserReviews(user.getUid());
+        loadProfile(user.getUid());
+        loadReviews(user.getUid());
 
-        // 🔹 Edit profile navigation
-        btnEditProfile.setOnClickListener(v -> {
-            startActivity(new Intent(this, EditProfileActivity.class));
-        });
+        btnMenu.setOnClickListener(v -> showMenu());
     }
 
-    private void loadUserProfile(String uid) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            loadProfile(user.getUid());
+        }
+    }
+
+    private void showMenu() {
+        PopupMenu popup = new PopupMenu(this, btnMenu);
+        popup.getMenuInflater().inflate(R.menu.menu_user_profile, popup.getMenu());
+        popup.setOnMenuItemClickListener(this::handleMenuClick);
+        popup.show();
+    }
+
+    private boolean handleMenuClick(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.menu_edit_profile) {
+            startActivity(new Intent(this, EditProfileActivity.class));
+            return true;
+
+        } else if (id == R.id.menu_about_us) {
+            startActivity(new Intent(this, AboutUsActivity.class));
+            return true;
+
+        } else if (id == R.id.menu_logout) {
+            auth.signOut();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void loadProfile(String uid) {
         db.collection("users").document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
@@ -79,38 +112,24 @@ public class UserProfileActivity extends AppCompatActivity {
                             Glide.with(this)
                                     .load(photoUrl)
                                     .circleCrop()
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                                     .into(imgUser);
+
                         }
                     }
                 });
     }
 
-    private void loadUserReviews(String uid) {
+    private void loadReviews(String uid) {
         db.collection("reviews")
                 .whereEqualTo("userId", uid)
                 .get()
-                .addOnSuccessListener(querySnapshot -> {
+                .addOnSuccessListener(qs -> {
                     reviewList.clear();
-                    for (QueryDocumentSnapshot doc : querySnapshot) {
-                        Review review = new Review(
-                                doc.getString("username"),
-                                doc.getString("profileUrl"),
-                                doc.getString("hotelImageUrl"),
-                                doc.getString("comment"),
-                                doc.getDouble("rating").floatValue()
-                        );
-                        reviewList.add(review);
-                    }
+                    reviewList.addAll(qs.toObjects(Review.class));
+                    txtReviewCount.setText(qs.size() + " reviews");
                     adapter.notifyDataSetChanged();
                 });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            loadUserProfile(user.getUid());
-        }
     }
 }
