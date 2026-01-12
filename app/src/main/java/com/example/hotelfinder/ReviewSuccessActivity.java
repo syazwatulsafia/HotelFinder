@@ -14,15 +14,12 @@ public class ReviewSuccessActivity extends AppCompatActivity {
 
         VideoView videoView = findViewById(R.id.success);
 
-        // Path to your video in res/raw
         String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.success;
         Uri uri = Uri.parse(videoPath);
         videoView.setVideoURI(uri);
 
-        // Start playing
         videoView.start();
 
-        // Automatically close the screen when the video is done
         videoView.setOnCompletionListener(mp -> {
             finish();
         });
