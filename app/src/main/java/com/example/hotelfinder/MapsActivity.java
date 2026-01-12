@@ -194,28 +194,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 response -> {
                     try {
                         JSONArray results = response.getJSONArray("results");
-                        hotelList.clear(); // clear previous data
+                        hotelList.clear();
 
                         mMap.clear();
                         drawRangeCircle(currentLatLng, 1000);
 
-                        for (int i = 1; i < results.length(); i++) {
+                        for (int i = 0; i < results.length(); i++) {
                             JSONObject hotel = results.getJSONObject(i);
                             JSONObject loc = hotel.getJSONObject("geometry")
                                     .getJSONObject("location");
 
                             LatLng latLng = new LatLng(
                                     loc.getDouble("lat"),
-                                    loc.getDouble("lng"));
+                                    loc.getDouble("lng")
+                            );
 
                             mMap.addMarker(new MarkerOptions()
                                     .position(latLng)
                                     .title(hotel.getString("name"))
                                     .snippet(hotel.optString("vicinity")));
 
-                            // Add hotel to list
                             float[] distanceResult = new float[1];
-
                             Location.distanceBetween(
                                     currentLatLng.latitude,
                                     currentLatLng.longitude,
@@ -226,23 +225,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             float distanceKm = distanceResult[0] / 1000f;
 
+                            JSONArray photos = hotel.optJSONArray("photos");
+                            String photoRef = null;
+                            if (photos != null && photos.length() > 0) {
+                                photoRef = photos.getJSONObject(0).getString("photo_reference");
+                            }
+
+                            String placeId = hotel.getString("place_id");
+
                             Hotel h = new Hotel(
                                     hotel.getString("name"),
                                     hotel.optString("vicinity"),
                                     latLng,
-                                    distanceKm
+                                    distanceKm,
+                                    photoRef,
+                                    placeId
                             );
 
                             hotelList.add(h);
                         }
 
-                        // Notify RecyclerView
+                        // ✅ Notify AFTER loop
                         hotelAdapter.notifyDataSetChanged();
 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 },
+
                 error -> Toast.makeText(this,
                         "Failed to load hotels", Toast.LENGTH_SHORT).show());
 
@@ -280,6 +290,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 intent.putExtra("lat", hotel.location.latitude);
                 intent.putExtra("lng", hotel.location.longitude);
                 intent.putExtra("address", hotel.address);
+                intent.putExtra("photoRef", hotel.photoReference);
+                intent.putExtra("placeId", hotel.placeId);
                 startActivity(intent);
             }
 

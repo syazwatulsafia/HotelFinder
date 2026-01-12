@@ -30,6 +30,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version = "21.3.0" }
 volley = "com.android.volley:volley:1.2.1"
+play-services-places = { group = "com.google.android.libraries.places", name = "places", version = "3.4.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
