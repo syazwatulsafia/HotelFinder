@@ -2,7 +2,6 @@ package com.example.hotelfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -11,7 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -32,9 +31,11 @@ public class HomePage extends AppCompatActivity {
             return insets;
         });
 
+        // Firebase
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+        // Welcome text
         TextView welcomeTitle = findViewById(R.id.textViewWelcome);
 
         if (user != null) {
@@ -51,6 +52,31 @@ public class HomePage extends AppCompatActivity {
             }
         }
 
+        // Bottom Navigation
+        BottomNavigationView bottomNavigationView =
+                findViewById(R.id.bottom_navigation);
 
+        // Highlight Home icon
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+                // Already on Home
+                return true;
+            }
+            else if (id == R.id.nav_maps) {
+                startActivity(new Intent(HomePage.this, MapsActivity.class));
+                return true;
+            }
+            else if (id == R.id.nav_profile) {
+                startActivity(new Intent(HomePage.this, ProfileActivity.class));
+                return true;
+            }
+
+            return false;
+        });
     }
 }
