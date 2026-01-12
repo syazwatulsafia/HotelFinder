@@ -20,60 +20,72 @@ public class ProfileActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
-    TextView profileText;
-    Button btnGotoReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         auth = FirebaseAuth.getInstance();
-        profileText = (TextView)findViewById(R.id.textView);
-        View btnGoToReview = findViewById(R.id.btnGoToReview);
+
+        TextView welcomeTitle = findViewById(R.id.textViewWelcome); // WELCOME!
+        TextView profileText = findViewById(R.id.textViewEmail);   // Email text
 
         user = auth.getCurrentUser();
+
         if (user != null) {
-            profileText.setText(user.getEmail());
+            String email = user.getEmail();
+            profileText.setText(email);
+
+            if (email != null && email.contains("@")) {
+                // Extract name before the '@'
+                String name = email.split("@")[0];
+
+                // Remove numbers or symbols if any (e.g., john22 -> John)
+                name = name.replaceAll("[0-9]", "");
+
+                if (name.length() > 0) {
+                    // Capitalize first letter
+                    name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    welcomeTitle.setText("Welcome back, " + name + "!");
+                }
+            }
         }
 
-        btnGoToReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProfileActivity.this, CreateReviewActivity.class);
-                startActivity(intent);
-            }
+        // Write Review button
+        findViewById(R.id.btnGoToReview).setOnClickListener(v -> {
+            startActivity(new Intent(this, CreateReviewActivity.class));
         });
 
+        // Team button
         MaterialButton btnTeam = findViewById(R.id.btnTeam);
         btnTeam.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, TeamActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, TeamActivity.class));
         });
 
+        // About Us button
         MaterialButton btnAboutUs = findViewById(R.id.btnAboutUs);
         btnAboutUs.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, AboutUsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, AboutUsActivity.class));
         });
-        //map add (here)
-        Button btnOpenMap = findViewById(R.id.btnMaps);
-        //map add (here)
-        btnOpenMap.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, MapsActivity.class);
-            startActivity(intent);
+
+        // Maps button
+        Button btnMaps = findViewById(R.id.btnMaps);
+        btnMaps.setOnClickListener(v -> {
+            startActivity(new Intent(this, MapsActivity.class));
         });
     }
-    public void signout(View v){
+
+    public void signout(View v) {
         auth.signOut();
         finish();
-        Intent i = new Intent(this,MainActivity.class);
-        startActivity(i);
-
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

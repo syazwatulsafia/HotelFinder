@@ -2,124 +2,105 @@ package com.example.hotelfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText e1, e2;
-    FirebaseAuth mAuth;
+    // Declare UI elements
+    private EditText editEmail, editPassword, editConfirmPassword;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initializing UI and Firebase
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // Bind views to IDs
+        editEmail = findViewById(R.id.editText);
+        editPassword = findViewById(R.id.editText2);
+        editConfirmPassword = findViewById(R.id.editConfirmPassword);
+
+        // Handle system bar padding for Edge-to-Edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        e1 = findViewById(R.id.editText);   // Email
-        e2 = findViewById(R.id.editText2);  // Password
-
-        mAuth = FirebaseAuth.getInstance();
-
-        // -------------------------------------
-        // SIMPLE EMAIL VALIDATION (live check)
-        // -------------------------------------
-        e1.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String email = s.toString();
-                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    e1.setError("Invalid email address");
-                } else {
-                    e1.setError(null);
-                }
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
-
-        // -------------------------------------
-        // SIMPLE PASSWORD VALIDATION (live check)
-        // -------------------------------------
-        e2.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() < 6) {
-                    e2.setError("Minimum 6 characters");
-                } else {
-                    e2.setError(null);
-                }
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
     }
 
-    public void createUser(View v){
+    /**
+     * Logic for creating a new user in Firebase
+     */
+    public void createUser(View v) {
+        String email = editEmail.getText().toString().trim();
+        String password = editPassword.getText().toString().trim();
+        String confirmPass = editConfirmPassword.getText().toString().trim();
 
-        String email = e1.getText().toString().trim();
-        String password = e2.getText().toString().trim();
-
-        // Final validation before register
-        if(email.isEmpty()){
-            e1.setError("Email cannot be empty");
-            e1.requestFocus();
+        // 1. Check for empty fields
+        if (email.isEmpty() || password.isEmpty() || confirmPass.isEmpty()) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            e1.setError("Invalid email address");
-            e1.requestFocus();
+        // 2. Validate email format
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            editEmail.setError("Please enter a valid email");
+            editEmail.requestFocus();
             return;
         }
 
-        if(password.isEmpty()){
-            e2.setError("Password cannot be empty");
-            e2.requestFocus();
+        // 3. Validate password length
+        if (password.length() < 6) {
+            editPassword.setError("Password must be at least 6 characters");
+            editPassword.requestFocus();
             return;
         }
 
-        if(password.length() < 6){
-            e2.setError("Minimum 6 characters");
-            e2.requestFocus();
+        // 4. Check if passwords match
+        if (!password.equals(confirmPass)) {
+            editConfirmPassword.setError("Passwords do not match");
+            editConfirmPassword.requestFocus();
             return;
         }
 
-        // Firebase create user
+        // 5. Firebase Registration
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getApplicationContext(),"User created successfully",Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(),"Registration failed",Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Success
+                        Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
+                        finish(); // Close RegisterActivity
+                    } else {
+                        // Failure (e.g., email already in use)
+                        String errorMessage = task.getException() != null ? task.getException().getMessage() : "Registration Failed";
+                        Toast.makeText(RegisterActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    /**
+     * Redirects the user back to the Login Screen (MainActivity)
+     */
+    public void redirectToLogin(View v) {
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish(); // Finish this activity so the user doesn't come back here on 'Back' press
     }
 }

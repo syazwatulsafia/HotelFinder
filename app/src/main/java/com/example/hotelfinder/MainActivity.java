@@ -70,6 +70,23 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    public void forgotPassword(View v) {
+        String e = email.getText().toString().trim();
+
+        if (e.isEmpty()) {
+            Toast.makeText(this, "Please enter your email to reset password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mAuth.sendPasswordResetEmail(e)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Reset link sent to your email", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
     public void openRegister(View v) {
         startActivity(new Intent(this, RegisterActivity.class));
     }
