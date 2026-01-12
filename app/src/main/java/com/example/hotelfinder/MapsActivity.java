@@ -85,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Already on Maps
                 return true;
             } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(MapsActivity.this, ProfileActivity.class));
+                startActivity(new Intent(MapsActivity.this, UserProfileActivity.class));
                 finish(); // optional
                 return true;
             }
