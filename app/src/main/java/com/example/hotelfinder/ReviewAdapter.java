@@ -15,46 +15,51 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
-    List<Review> list;
-    Context context;
+public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
+    private List<Review> reviewList;
 
-    public ReviewAdapter(List<Review> list, Context context) {
-        this.list = list;
-        this.context = context;
+    public ReviewAdapter(List<Review> reviewList) {
+        this.reviewList = reviewList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_review, parent, false));
+    public ReviewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review, parent, false);
+        return new ReviewViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Review review = list.get(position);
-        holder.name.setText(review.username);
-        holder.comment.setText(review.comment);
-        holder.ratingBar.setRating(review.rating);
+    public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
+        Review review = reviewList.get(position);
+        holder.tvComment.setText(review.getComment());
+        holder.ratingBar.setRating(review.getRating());
 
-        Glide.with(context).load(review.profileUrl).circleCrop().into(holder.profile);
-        Glide.with(context).load(review.hotelImageUrl).into(holder.hotelImg);
+        if (review.getImageUri() != null) {
+            holder.ivPhoto.setVisibility(View.VISIBLE);
+            // Using Glide to load the image efficiently
+            Glide.with(holder.itemView.getContext())
+                    .load(review.getImageUri())
+                    .centerCrop()
+                    .into(holder.ivPhoto);
+        } else {
+            holder.ivPhoto.setVisibility(View.GONE);
+        }
     }
 
     @Override
-    public int getItemCount() { return list.size(); }
+    public int getItemCount() { return reviewList.size(); }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView profile, hotelImg;
-        TextView name, comment;
+    static class ReviewViewHolder extends RecyclerView.ViewHolder {
+        TextView tvComment;
         RatingBar ratingBar;
-        public ViewHolder(@NonNull View itemView) {
+        ImageView ivPhoto;
+
+        public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
-            profile = itemView.findViewById(R.id.imgUserProfile);
-            hotelImg = itemView.findViewById(R.id.imgHotelReview);
-            name = itemView.findViewById(R.id.txtUsername);
-            comment = itemView.findViewById(R.id.txtComment);
-            ratingBar = itemView.findViewById(R.id.ratingBar);
+            tvComment = itemView.findViewById(R.id.displayComment);
+            ratingBar = itemView.findViewById(R.id.displayRating);
+            ivPhoto = itemView.findViewById(R.id.displayPhoto); // Add this to item_review.xml
         }
     }
 }

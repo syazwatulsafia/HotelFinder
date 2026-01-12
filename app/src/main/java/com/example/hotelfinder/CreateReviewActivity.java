@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -22,10 +21,11 @@ public class CreateReviewActivity extends AppCompatActivity {
 
     private RatingBar ratingBar;
     private EditText etComment;
-    private Button btnSubmit, btnAddPhoto;
+    private Button btnSubmit;
+    private ImageButton btnAddPhoto;
     private ImageView btnBack;
 
-    private Uri cameraImageUri;
+    private Uri selectedImageUri;
     private FirebaseFirestore db;
 
     private ActivityResultLauncher<String> galleryLauncher;
@@ -35,7 +35,6 @@ public class CreateReviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_create_review);
 
         db = FirebaseFirestore.getInstance();
@@ -48,7 +47,6 @@ public class CreateReviewActivity extends AppCompatActivity {
         }
 
         btnAddPhoto.setOnClickListener(v -> checkPermissionAndShowDialog());
-
         btnSubmit.setOnClickListener(v -> submitReview());
     }
 
@@ -65,7 +63,7 @@ public class CreateReviewActivity extends AppCompatActivity {
                 uri -> { if (uri != null) handleImageSelection(uri); });
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> { if (result.getResultCode() == RESULT_OK) handleImageSelection(cameraImageUri); });
+                result -> { if (result.getResultCode() == RESULT_OK) handleImageSelection(selectedImageUri); });
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
@@ -95,19 +93,19 @@ public class CreateReviewActivity extends AppCompatActivity {
     private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Review Picture");
-        cameraImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        selectedImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImageUri);
         cameraLauncher.launch(intent);
     }
 
     private void handleImageSelection(Uri uri) {
         if (uri != null) {
-            ImageButton btnAddPhoto = findViewById(R.id.btn_add_photo);
+            selectedImageUri = uri;
             btnAddPhoto.setImageURI(uri);
+            btnAddPhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
             btnAddPhoto.setBackground(null);
-            this.cameraImageUri = uri;
         }
     }
 
@@ -121,18 +119,26 @@ public class CreateReviewActivity extends AppCompatActivity {
         }
 
         btnSubmit.setEnabled(false);
+        btnSubmit.setText("Submitting...");
+
         Map<String, Object> review = new HashMap<>();
         review.put("rating", rating);
         review.put("comment", comment);
         review.put("timestamp", System.currentTimeMillis());
 
+        // Add the image URI string if one was selected
+        if (selectedImageUri != null) {
+            review.put("imageUri", selectedImageUri.toString());
+        }
+
         db.collection("reviews").add(review)
                 .addOnSuccessListener(doc -> {
                     Toast.makeText(this, "Review Submitted!", Toast.LENGTH_SHORT).show();
-                    finish(); // Go back to the list
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     btnSubmit.setEnabled(true);
+                    btnSubmit.setText("Submit");
                     Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
