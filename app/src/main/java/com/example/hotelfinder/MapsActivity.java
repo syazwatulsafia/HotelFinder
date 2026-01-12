@@ -186,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void searchNearbyHotels() {
         String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
                 "location=" + currentLatLng.latitude + "," + currentLatLng.longitude +
-                "&radius=2000&type=lodging&key=" + API_KEY;
+                "&radius=2000&type=lodging&keyword=hotel&key=" + API_KEY;
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
