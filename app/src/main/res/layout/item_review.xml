@@ -1,68 +1,59 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_marginBottom="20dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RatingBar
+            android:id="@+id/displayRating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:isIndicator="true"
+            android:progressTint="#000000"
+            android:secondaryProgressTint="#000000" />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imgUserProfile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@mipmap/ic_launcher_round" />
+    <ImageView
+        android:id="@+id/displayPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="#F0EAE8"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:contentDescription="Review Image" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txtUsername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="User Name"
-                    android:textStyle="bold" />
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:numStars="5"
-                    android:stepSize="0.5" />
-            </LinearLayout>
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txtComment"
+            android:id="@+id/displayComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Review comment goes here..." />
-
-        <ImageView
-            android:id="@+id/imgHotelReview"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background" />
+            android:text="This was an amazing stay!"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="4dp" />
 
     </LinearLayout>
+
+</LinearLayout>
 </androidx.cardview.widget.CardView>
