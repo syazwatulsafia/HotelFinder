@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             // User is signed in, go to ProfileActivity immediately
-            startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            startActivity(new Intent(MainActivity.this, HomePage.class));
             finish(); // Close MainActivity so they can't go back to login
             return;
         }
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, ProfileActivity.class));
+                        startActivity(new Intent(this, HomePage.class));
                         finish();
                     } else {
                         Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show();
