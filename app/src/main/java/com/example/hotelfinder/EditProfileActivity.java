@@ -1,23 +1,21 @@
 package com.example.hotelfinder;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.*;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -27,18 +25,31 @@ public class EditProfileActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
-    FirebaseFirestore db;
-    StorageReference storageRef;
+    DatabaseReference userRef;
 
-    Uri imageUri;
+    Uri selectedImageUri;
 
+    // 🔹 IMAGE PICKER
     ActivityResultLauncher<String> imagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
-                    imageUri = uri;
+                    selectedImageUri = uri;
                     imgProfile.setImageURI(uri);
                 }
             });
+
+    // 🔹 PERMISSION LAUNCHER
+    ActivityResultLauncher<String> permissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(),
+                    granted -> {
+                        if (granted) {
+                            imagePicker.launch("image/*");
+                        } else {
+                            Toast.makeText(this,
+                                    "Permission denied",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,95 +63,96 @@ public class EditProfileActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        storageRef = FirebaseStorage.getInstance().getReference("profile_images");
+        userRef = FirebaseDatabase.getInstance().getReference("users");
 
         if (user == null) {
             finish();
             return;
         }
 
+        // 🔹 PRE-FILL EMAIL
         edtEmail.setText(user.getEmail());
-        loadProfileImage();
 
-        imgProfile.setOnClickListener(v -> imagePicker.launch("image/*"));
+        // 🔹 LOAD PROFILE IMAGE (IF EXISTS)
+        userRef.child(user.getUid()).child("photoUri")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        String uri = snapshot.getValue(String.class);
+                        Glide.with(this)
+                                .load(uri)
+                                .circleCrop()
+                                .into(imgProfile);
+                    }
+                });
+
+        imgProfile.setOnClickListener(v -> checkPermission());
+
         btnSave.setOnClickListener(v -> saveProfile());
     }
 
-    private void loadProfileImage() {
-        db.collection("users").document(user.getUid())
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        String url = doc.getString("photoUrl");
-                        if (url != null && !url.isEmpty()) {
-                            Glide.with(this).load(url).circleCrop().into(imgProfile);
-                        }
-                    }
-                });
+    // 🔹 ANDROID 12 / 13 PERMISSION HANDLING
+    private void checkPermission() {
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            // Android 13+
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_MEDIA_IMAGES
+            ) == PackageManager.PERMISSION_GRANTED) {
+
+                imagePicker.launch("image/*");
+
+            } else {
+                permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+            }
+
+        } else {
+            // Android 12 and below
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED) {
+
+                imagePicker.launch("image/*");
+
+            } else {
+                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+        }
     }
 
+    // 🔹 SAVE PROFILE (PHOTO / EMAIL / PASSWORD OPTIONAL)
     private void saveProfile() {
 
         String newEmail = edtEmail.getText().toString().trim();
         String newPassword = edtPassword.getText().toString().trim();
 
-        // 🔹 1. Update EMAIL (optional)
-        if (!newEmail.equals(user.getEmail())) {
+        // UPDATE EMAIL
+        if (!newEmail.isEmpty() && !newEmail.equals(user.getEmail())) {
             user.updateEmail(newEmail)
                     .addOnSuccessListener(unused ->
-                            Toast.makeText(this, "Email updated", Toast.LENGTH_SHORT).show()
-                    )
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Email update failed. Login again.", Toast.LENGTH_LONG).show()
-                    );
+                            userRef.child(user.getUid())
+                                    .child("email")
+                                    .setValue(newEmail));
         }
 
-        // 🔹 2. Update PASSWORD (ONLY if user typed one)
+        // UPDATE PASSWORD (OPTIONAL)
         if (!newPassword.isEmpty()) {
-
-            if (newPassword.length() < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                // ❌ DO NOT return — allow photo update
-            } else {
-                user.updatePassword(newPassword)
-                        .addOnSuccessListener(unused ->
-                                Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show()
-                        )
-                        .addOnFailureListener(e ->
-                                Toast.makeText(this, "Password update failed. Login again.", Toast.LENGTH_LONG).show()
-                        );
-            }
+            user.updatePassword(newPassword);
         }
 
-        // 🔹 3. Update PHOTO (independent from password)
-        if (imageUri != null) {
-            StorageReference ref = storageRef.child(user.getUid() + ".jpg");
-            ref.putFile(imageUri)
-                    .continueWithTask(task -> ref.getDownloadUrl())
-                    .addOnSuccessListener(uri ->
-                            saveUserToFirestore(newEmail, uri.toString())
-                    );
-        } else {
-            saveUserToFirestore(newEmail, null);
-        }
-    }
-
-    private void saveUserToFirestore(String email, String photoUrl) {
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("email", email);
-
-        if (photoUrl != null) {
-            map.put("photoUrl", photoUrl);
+        // UPDATE PROFILE PHOTO (OPTIONAL)
+        if (selectedImageUri != null) {
+            userRef.child(user.getUid())
+                    .child("photoUri")
+                    .setValue(selectedImageUri.toString());
         }
 
-        db.collection("users")
-                .document(user.getUid())
-                .set(map, SetOptions.merge())
-                .addOnSuccessListener(unused -> {
-                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+        Toast.makeText(this,
+                "Profile updated successfully",
+                Toast.LENGTH_SHORT).show();
+
+        finish();
     }
 }

@@ -1,19 +1,16 @@
 package com.example.hotelfinder;
 
 public class Review {
-    private String comment;
-    private float rating;
-    private String imageUri;
 
-    public Review() {} // Needed for Firebase
+    public String reviewId, userId;
+    public String userEmail; // ✅ ADD THIS
+    public String hotelName, hotelAddress;
+    public String comment, imageUri;
+    public float rating;
+    public double lat, lng;
+    public long timestamp;
 
-    public Review(String comment, float rating, String imageUri) {
-        this.comment = comment;
-        this.rating = rating;
-        this.imageUri = imageUri;
-    }
+    // REQUIRED EMPTY CONSTRUCTOR
+    public Review() {}
 
-    public String getComment() { return comment; }
-    public float getRating() { return rating; }
-    public String getImageUri() { return imageUri; }
 }

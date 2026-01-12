@@ -4,31 +4,42 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.net.Uri;
 
 public class UserProfileActivity extends AppCompatActivity {
 
+    // UI
     ImageView imgUser, btnMenu;
     TextView txtEmail, txtReviewCount;
     RecyclerView recyclerReviews;
 
+    // Firebase
     FirebaseAuth auth;
-    FirebaseFirestore db;
+    FirebaseUser user;
+    DatabaseReference userRef, reviewRef;
 
-    List<Review> reviewList = new ArrayList<>();
+    // Adapter
+    List<Review> reviewList;
     ReviewAdapter adapter;
 
     @Override
@@ -36,100 +47,149 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+        // Firebase
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
+        if (user == null) {
+            finish();
+            return;
+        }
+
+        // Views
         imgUser = findViewById(R.id.imgUser);
         btnMenu = findViewById(R.id.btnMenu);
         txtEmail = findViewById(R.id.txtEmail);
         txtReviewCount = findViewById(R.id.txtReviewCount);
         recyclerReviews = findViewById(R.id.recyclerReviews);
 
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) {
-            finish();
-            return;
-        }
-
         txtEmail.setText(user.getEmail());
 
+        // RecyclerView
+        reviewList = new ArrayList<>();
+        adapter = new ReviewAdapter(reviewList);
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ReviewAdapter(reviewList, this);
         recyclerReviews.setAdapter(adapter);
 
-        loadProfile(user.getUid());
-        loadReviews(user.getUid());
+        // Database refs
+        userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(user.getUid());
 
+        reviewRef = FirebaseDatabase.getInstance()
+                .getReference("reviews");
+
+        loadUserProfile();
+        loadUserReviews();
+
+        // Edit profile on image click
+        imgUser.setOnClickListener(v ->
+                startActivity(new Intent(this, EditProfileActivity.class))
+        );
+
+        // Menu
         btnMenu.setOnClickListener(v -> showMenu());
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    // 🔹 Load profile photo (REALTIME)
+    private void loadUserProfile() {
 
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            loadProfile(user.getUid());
-        }
-    }
+        userRef.child(user.getUid())
+                .addValueEventListener(new ValueEventListener() {
 
-    private void showMenu() {
-        PopupMenu popup = new PopupMenu(this, btnMenu);
-        popup.getMenuInflater().inflate(R.menu.menu_user_profile, popup.getMenu());
-        popup.setOnMenuItemClickListener(this::handleMenuClick);
-        popup.show();
-    }
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-    private boolean handleMenuClick(MenuItem item) {
+                        if (snapshot.exists()) {
 
-        int id = item.getItemId();
+                            // EMAIL
+                            String email = snapshot.child("email")
+                                    .getValue(String.class);
+                            if (email != null) {
+                                txtEmail.setText(email);
+                            }
 
-        if (id == R.id.menu_edit_profile) {
-            startActivity(new Intent(this, EditProfileActivity.class));
-            return true;
+                            // PROFILE PHOTO
+                            String photoUri = snapshot.child("photoUri")
+                                    .getValue(String.class);
 
-        } else if (id == R.id.menu_about_us) {
-            startActivity(new Intent(this, AboutUsActivity.class));
-            return true;
-
-        } else if (id == R.id.menu_logout) {
-            auth.signOut();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-            return true;
-        }
-
-        return false;
-    }
-
-    private void loadProfile(String uid) {
-        db.collection("users").document(uid)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        String photoUrl = doc.getString("photoUrl");
-                        if (photoUrl != null && !photoUrl.isEmpty()) {
-                            Glide.with(this)
-                                    .load(photoUrl)
-                                    .circleCrop()
-                                    .skipMemoryCache(true)
-                                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
-                                    .into(imgUser);
-
+                            if (photoUri != null && !photoUri.isEmpty()) {
+                                Glide.with(UserProfileActivity.this)
+                                        .load(Uri.parse(photoUri))
+                                        .circleCrop()
+                                        .into(imgUser);
+                            } else {
+                                imgUser.setImageResource(
+                                        R.drawable.ic_profile_placeholder);
+                            }
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(UserProfileActivity.this,
+                                "Failed to load profile",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void loadReviews(String uid) {
-        db.collection("reviews")
-                .whereEqualTo("userId", uid)
-                .get()
-                .addOnSuccessListener(qs -> {
-                    reviewList.clear();
-                    reviewList.addAll(qs.toObjects(Review.class));
-                    txtReviewCount.setText(qs.size() + " reviews");
-                    adapter.notifyDataSetChanged();
+
+    // 🔹 Load user's reviews
+    private void loadUserReviews() {
+        reviewRef.orderByChild("userId")
+                .equalTo(user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        reviewList.clear();
+
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            Review review = ds.getValue(Review.class);
+                            if (review != null) {
+                                reviewList.add(review);
+                            }
+                        }
+
+                        txtReviewCount.setText(reviewList.size() + " reviews");
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(UserProfileActivity.this,
+                                "Failed to load reviews",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 });
+    }
+
+    // 🔹 Popup menu
+    private void showMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, btnMenu);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_user_profile, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.menu_edit_profile) {
+                startActivity(new Intent(this, EditProfileActivity.class));
+                return true;
+            }
+            else if (id == R.id.menu_about_us) {
+                startActivity(new Intent(this, AboutUsActivity.class));
+                return true;
+            }
+            else if (id == R.id.menu_logout) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+                return true;
+            }
+            return false;
+        });
+
+        popupMenu.show();
     }
 }
