@@ -73,6 +73,12 @@
             android:name=".MainActivity"
             android:exported="true"></activity>
         <activity android:name=".CreateReviewActivity" />
+        <activity android:name=".UserProfileActivity"
+            android:exported="false" />
+        <activity android:name=".EditProfileActivity"
+            android:exported="false"/>
+
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">

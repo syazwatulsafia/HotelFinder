@@ -72,7 +72,7 @@ public class HomePage extends AppCompatActivity {
                 return true;
             }
             else if (id == R.id.nav_profile) {
-                startActivity(new Intent(HomePage.this, ProfileActivity.class));
+                startActivity(new Intent(HomePage.this, UserProfileActivity.class));
                 return true;
             }
 

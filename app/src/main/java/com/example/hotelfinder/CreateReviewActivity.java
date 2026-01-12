@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class CreateReviewActivity extends AppCompatActivity {
 
@@ -194,13 +196,14 @@ public class CreateReviewActivity extends AppCompatActivity {
     }
 
     private void submitReview() {
-        if (hotelName == null) {
-            Toast.makeText(this, "Please search for a hotel first", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        btnSubmit.setEnabled(false);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         Map<String, Object> review = new HashMap<>();
+        review.put("userId", user.getUid());
+        review.put("username", user.getEmail());
+        review.put("profileUrl", "");
+        review.put("hotelImageUrl", "");
         review.put("hotelName", hotelName);
         review.put("hotelAddress", hotelAddress);
         review.put("rating", ratingBar.getRating());
@@ -209,13 +212,9 @@ public class CreateReviewActivity extends AppCompatActivity {
 
         db.collection("reviews").add(review)
                 .addOnSuccessListener(doc -> {
-                    Intent intent = new Intent(this, ReviewSuccessActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(this, ReviewSuccessActivity.class));
                     finish();
-                })
-                .addOnFailureListener(e -> {
-                    btnSubmit.setEnabled(true);
-                    Toast.makeText(this, "Failed to submit review", Toast.LENGTH_SHORT).show();
                 });
     }
+
 }
