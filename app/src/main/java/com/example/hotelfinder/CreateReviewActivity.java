@@ -126,7 +126,6 @@ public class CreateReviewActivity extends AppCompatActivity {
         review.put("comment", comment);
         review.put("timestamp", System.currentTimeMillis());
 
-        // Add the image URI string if one was selected
         if (selectedImageUri != null) {
             review.put("imageUri", selectedImageUri.toString());
         }

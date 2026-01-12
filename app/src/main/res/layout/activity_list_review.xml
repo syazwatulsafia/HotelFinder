@@ -31,17 +31,6 @@
             android:textSize="22sp"
             android:fontFamily="sans-serif-light" />
 
-        <ImageButton
-            android:id="@+id/btnOpenSearch"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Search"
-            android:padding="12dp"
-            android:src="@android:drawable/ic_menu_search"
-            app:tint="#000000" />
     </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

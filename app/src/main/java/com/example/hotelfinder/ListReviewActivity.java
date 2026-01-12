@@ -31,7 +31,6 @@ public class ListReviewActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // 2. Setup RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
         reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(reviewList);
