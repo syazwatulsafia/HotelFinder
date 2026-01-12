@@ -1,14 +1,19 @@
 package com.example.hotelfinder;
 
 public class Review {
-    String username, profileUrl, hotelImageUrl, comment;
-    float rating;
+    private String comment;
+    private float rating;
+    private String imageUri;
 
-    public Review(String username, String profileUrl, String hotelImageUrl, String comment, float rating) {
-        this.username = username;
-        this.profileUrl = profileUrl;
-        this.hotelImageUrl = hotelImageUrl;
+    public Review() {} // Needed for Firebase
+
+    public Review(String comment, float rating, String imageUri) {
         this.comment = comment;
         this.rating = rating;
+        this.imageUri = imageUri;
     }
+
+    public String getComment() { return comment; }
+    public float getRating() { return rating; }
+    public String getImageUri() { return imageUri; }
 }
