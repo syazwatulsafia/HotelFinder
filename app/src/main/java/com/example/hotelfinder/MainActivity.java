@@ -2,8 +2,14 @@ package com.example.hotelfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,12 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // CHECK IF USER IS ALREADY LOGGED IN
+        // Check if user already logged in
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            // User is signed in, go to ProfileActivity immediately
+        if (currentUser != null) {
             startActivity(new Intent(MainActivity.this, HomePage.class));
-            finish(); // Close MainActivity so they can't go back to login
+            finish();
             return;
         }
 
@@ -46,7 +51,43 @@ public class MainActivity extends AppCompatActivity {
 
         email = findViewById(R.id.editEmail);
         password = findViewById(R.id.editPassword);
-        mAuth = FirebaseAuth.getInstance();
+
+        setupRegisterLink();
+    }
+
+    private void setupRegisterLink() {
+        TextView tvRegisterHint = findViewById(R.id.tvRegisterHint);
+
+        String text = "Dont have an account? Sign Up";
+        SpannableString spannableString = new SpannableString(text);
+
+        int start = text.indexOf("Sign Up");
+        int end = start + "Sign Up".length();
+
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(android.graphics.Color.parseColor("#759ea5"));// link color
+                ds.setUnderlineText(false);
+                ds.setFakeBoldText(true);
+            }
+        };
+
+        spannableString.setSpan(
+                clickableSpan,
+                start,
+                end,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+
+        tvRegisterHint.setText(spannableString);
+        tvRegisterHint.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     public void loginUser(View v) {
@@ -81,13 +122,10 @@ public class MainActivity extends AppCompatActivity {
         mAuth.sendPasswordResetEmail(e)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(MainActivity.this, "Reset link sent to your email", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Reset link sent to your email", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-    public void openRegister(View v) {
-        startActivity(new Intent(this, RegisterActivity.class));
     }
 }

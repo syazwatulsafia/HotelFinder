@@ -9,15 +9,13 @@
     android:background="#fff6f3"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
-        android:text="Roomly"
-        android:textColor="#d1bb9b"
-        android:textSize="32sp"
-        android:textStyle="bold"
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="154dp"
+        android:layout_height="192dp"
+        android:layout_marginTop="60dp"
+        android:contentDescription="App Logo"
+        android:src="@drawable/logo_round"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,11 +26,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Find hotels near you easily"
-        android:textColor="#759ea5"
+        android:textColor="#d1bb9b"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        app:layout_constraintTop_toBottomOf="@id/imgLogo" />
 
     <EditText
         android:id="@+id/editEmail"
@@ -92,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Forgot Password?"
-        android:textColor="#a0815c"
+        android:textColor="#759ea5"
         android:textStyle="bold"
         android:padding="8dp"
         android:onClick="forgotPassword"
@@ -121,24 +119,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Start your journey with us. Sign up now."
-        android:textColor="#759ea5"
+        android:text="Dont have an account? Sign Up"
+        android:textColor="@color/black"
         android:textSize="14sp"
+        android:textIsSelectable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnLogin" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#333333"
-        android:onClick="openRegister"
-        android:text="SIGN UP"
-        android:textColor="#fff6f3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvRegisterHint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
