@@ -23,6 +23,7 @@ public class HotelDetailActivity extends AppCompatActivity {
         TextView txtWebsite = findViewById(R.id.txtWebsite);
         Button btnCall = findViewById(R.id.btnCall);
         Button btnNavigate = findViewById(R.id.btnNavigate);
+        Button btnSeeReview = findViewById(R.id.btnSeeReview);
 
         // Get data from Intent
         String name = getIntent().getStringExtra("name");
@@ -34,25 +35,30 @@ public class HotelDetailActivity extends AppCompatActivity {
         txtAddress.setText(address);
 
         // BACK BUTTON
-        btnBack.setOnClickListener(v -> finish()); // simply finish the activity
+        btnBack.setOnClickListener(v -> finish());
 
         // CALL
         btnCall.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_DIAL,
                         Uri.parse("tel:0123456789"))));
 
-        // WEBSITE (HYPERLINK)
+        // WEBSITE
         String websiteUrl = "https://www.google.com/search?q=" + name;
         txtWebsite.setText("Visit website");
-
         txtWebsite.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl));
             startActivity(intent);
         });
 
-        // 🗺️ NAVIGATION
+        // NAVIGATION
         btnNavigate.setOnClickListener(v ->
                 startActivity(new Intent(Intent.ACTION_VIEW,
                         Uri.parse("google.navigation:q=" + lat + "," + lng))));
+
+        btnSeeReview.setOnClickListener(v -> {
+            Intent intent = new Intent(HotelDetailActivity.this, ListReviewActivity.class);
+            intent.putExtra("hotelName", name);
+            startActivity(intent);
+        });
     }
 }

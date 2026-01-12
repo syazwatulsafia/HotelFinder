@@ -4,9 +4,12 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -21,6 +24,7 @@ public class CreateReviewActivity extends AppCompatActivity {
 
     private RatingBar ratingBar;
     private EditText etComment;
+    private TextView tvCharCount; // Added this
     private Button btnSubmit;
     private ImageButton btnAddPhoto;
     private ImageView btnBack;
@@ -41,6 +45,7 @@ public class CreateReviewActivity extends AppCompatActivity {
 
         initViews();
         setupLaunchers();
+        setupTextWatcher(); // Added this
 
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
@@ -54,8 +59,33 @@ public class CreateReviewActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.ratingBar);
         btnAddPhoto = findViewById(R.id.btn_add_photo);
         etComment = findViewById(R.id.et_comment);
+        tvCharCount = findViewById(R.id.tvCharCount); // Initialize the counter
         btnSubmit = findViewById(R.id.btn_submit);
         btnBack = findViewById(R.id.btn_back_arrow);
+    }
+
+    // 🔹 New Method for Responsive Character Counting
+    private void setupTextWatcher() {
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int length = s.length();
+                tvCharCount.setText(length + " / 250");
+
+                // Change color to red if limit reached
+                if (length >= 250) {
+                    tvCharCount.setTextColor(Color.RED);
+                } else {
+                    tvCharCount.setTextColor(Color.parseColor("#80000000")); // Muted black
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     private void setupLaunchers() {
@@ -103,9 +133,14 @@ public class CreateReviewActivity extends AppCompatActivity {
     private void handleImageSelection(Uri uri) {
         if (uri != null) {
             selectedImageUri = uri;
+
+            btnAddPhoto.setImageURI(null);
             btnAddPhoto.setImageURI(uri);
             btnAddPhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
             btnAddPhoto.setBackground(null);
+            btnAddPhoto.setPadding(0,0,0,0); // Remove padding so photo is edge-to-edge
+
+            Toast.makeText(this, "Photo added!", Toast.LENGTH_SHORT).show();
         }
     }
 
