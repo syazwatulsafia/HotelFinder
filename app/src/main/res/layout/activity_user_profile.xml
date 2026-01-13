@@ -5,88 +5,122 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="#FFF6F3"
     tools:context=".UserProfileActivity">
 
-    <ImageView
-        android:id="@+id/btn_back_arrow"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="start"
-        android:padding="8dp"
-        android:src="@drawable/back_button"
-        app:tint="#000000"
-        android:contentDescription="Back" />
-
-    <!-- MENU ICON -->
-    <ImageView
-        android:id="@+id/btnMenu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@android:drawable/ic_menu_more"
+    <!-- HEADER CARD -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="6dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- PROFILE PHOTO -->
-    <ImageView
-        android:id="@+id/imgUser"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_profile_placeholder"
-        android:background="@drawable/circle_image"
-        android:scaleType="centerCrop"
-        app:layout_constraintTop_toBottomOf="@id/btnMenu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- EMAIL -->
-    <TextView
-        android:id="@+id/txtEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="user@email.com"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/imgUser"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-    <!-- REVIEW COUNT -->
-    <TextView
-        android:id="@+id/txtReviewCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2 reviews"
-        android:textSize="13sp"
-        android:textColor="#777777"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/txtEmail"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+            <!-- BACK BUTTON -->
+            <ImageView
+                android:id="@+id/btn_back_arrow"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@drawable/back_button"
+                app:tint="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- MENU ICON -->
+            <ImageView
+                android:id="@+id/btnMenu"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_more"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- PROFILE PHOTO -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="4dp"
+                app:layout_constraintTop_toBottomOf="@id/btnMenu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="18dp">
+
+                <ImageView
+                    android:id="@+id/imgUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="104dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile_placeholder" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- EMAIL -->
+            <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@email.com"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/imgUser"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- REVIEW COUNT -->
+            <TextView
+                android:id="@+id/txtReviewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 reviews"
+                android:textSize="13sp"
+                android:textColor="#777777"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/txtEmail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- POSTS LABEL -->
     <TextView
         android:id="@+id/txtPosts"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Posts"
         android:textStyle="bold"
-        android:padding="8dp"
-        android:background="#F0F0F0"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/txtReviewCount"/>
+        android:textSize="14sp"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:textColor="#333333"
+        app:layout_constraintTop_toBottomOf="@id/cardHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
 
     <!-- REVIEW FEED -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerReviews"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="16dp"
         app:layout_constraintTop_toBottomOf="@id/txtPosts"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_review"/>
+        tools:listitem="@layout/item_review" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
