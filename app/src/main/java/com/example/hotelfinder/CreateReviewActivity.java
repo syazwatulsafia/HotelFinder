@@ -176,6 +176,12 @@ public class CreateReviewActivity extends AppCompatActivity {
         btnSubmit.setText("Submitting...");
 
         String reviewId = reviewRef.push().getKey();
+        if (reviewId == null) {
+            btnSubmit.setEnabled(true);
+            btnSubmit.setText("Submit");
+            Toast.makeText(this, "Failed to generate review ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Map<String, Object> review = new HashMap<>();
         review.put("userEmail", user.getEmail());
@@ -189,7 +195,7 @@ public class CreateReviewActivity extends AppCompatActivity {
         review.put("comment", comment);
         review.put("timestamp", System.currentTimeMillis());
 
-        // ✅ MATCH Review.java EXACTLY
+        // ✅ matches Review.java field name
         if (selectedImageUri != null) {
             review.put("imageUri", selectedImageUri.toString());
         }
@@ -209,9 +215,5 @@ public class CreateReviewActivity extends AppCompatActivity {
                             "Failed to submit review",
                             Toast.LENGTH_SHORT).show();
                 });
-
-        FirebaseUser users = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
-
     }
 }
