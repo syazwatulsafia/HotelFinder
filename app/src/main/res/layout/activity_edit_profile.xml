@@ -129,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Save Changes"
+                android:text="SAVE CHANGES"
                 android:textAllCaps="false"
                 android:textColor="#333333"
                 app:backgroundTint="#E8DFD1"
