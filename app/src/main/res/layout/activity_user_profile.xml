@@ -8,6 +8,16 @@
     android:padding="16dp"
     tools:context=".UserProfileActivity">
 
+    <ImageView
+        android:id="@+id/btn_back_arrow"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="start"
+        android:padding="8dp"
+        android:src="@drawable/back_button"
+        app:tint="#000000"
+        android:contentDescription="Back" />
+
     <!-- MENU ICON -->
     <ImageView
         android:id="@+id/btnMenu"

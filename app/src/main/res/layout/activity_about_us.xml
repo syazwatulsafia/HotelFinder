@@ -8,6 +8,16 @@
     android:padding="24dp">
 
     <ImageView
+        android:id="@+id/btn_back_arrow"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="start"
+        android:padding="8dp"
+        android:src="@drawable/back_button"
+        app:tint="#000000"
+        android:contentDescription="Back" />
+
+    <ImageView
         android:id="@+id/ivLogo"
         android:layout_width="151dp"
         android:layout_height="179dp"
@@ -82,7 +92,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Any feedback can fill this form"
-        android:textColor="#333333"
+        android:textColor="#759EA5"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvPhone" />
@@ -91,10 +102,10 @@
         android:id="@+id/tvFormLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Share your thoughts"
-        android:textColor="#759EA5"
-        android:textStyle="bold|italic"
         android:layout_marginTop="4dp"
+        android:autoLink="web"
+        android:text="https://forms.gle/cdKNAAb38U8bqHs69"
+        android:textColor="#759EA5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvFeedback" />
 

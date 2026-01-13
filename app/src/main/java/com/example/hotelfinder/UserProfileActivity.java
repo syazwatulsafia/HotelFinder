@@ -29,7 +29,7 @@ import android.net.Uri;
 public class UserProfileActivity extends AppCompatActivity {
 
     // UI
-    ImageView imgUser, btnMenu;
+    ImageView imgUser, btnMenu, btnBack;
     TextView txtEmail, txtReviewCount;
     RecyclerView recyclerReviews;
 
@@ -46,6 +46,9 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+        ImageView btnBack = findViewById(R.id.btn_back_arrow);
+        btnBack.setOnClickListener(v -> finish());
 
         // Firebase
         auth = FirebaseAuth.getInstance();

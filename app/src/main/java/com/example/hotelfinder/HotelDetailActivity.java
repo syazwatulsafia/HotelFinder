@@ -19,6 +19,7 @@ import org.json.JSONObject;
 public class HotelDetailActivity extends AppCompatActivity {
 
     private static final String API_KEY = "AIzaSyBKpSvu4pYLp6Jh1PPbBr6HFPstRUzhnCU";
+    private ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class HotelDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hotel_detail);
 
         // Views
-        ImageView btnBack = findViewById(R.id.btnBack);
+        ImageView btnBack = findViewById(R.id.btn_back_arrow);
         TextView txtName = findViewById(R.id.txtName);
         TextView txtAddress = findViewById(R.id.txtAddress);
         TextView txtWebsite = findViewById(R.id.txtWebsite);
