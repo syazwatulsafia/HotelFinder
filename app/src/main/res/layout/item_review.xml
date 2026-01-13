@@ -46,7 +46,13 @@
         android:layout_height="wrap_content"
         android:numStars="5"
         android:stepSize="1"
-        android:isIndicator="true" />
+        android:isIndicator="true"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:progressTint="#FFC107"
+        android:secondaryProgressTint="#FFC107"
+        android:layout_marginTop="4dp"/>
+
 
     <!-- COMMENT -->
     <TextView
