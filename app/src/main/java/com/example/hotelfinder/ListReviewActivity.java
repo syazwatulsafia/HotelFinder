@@ -23,23 +23,18 @@ import java.util.List;
 
 public class ListReviewActivity extends AppCompatActivity {
 
-    // UI
     RecyclerView recyclerView;
     ImageView btnBack;
     TextView txtTitle;
     FloatingActionButton fabAddReview;
     BottomNavigationView bottomNavigationView;
 
-    // Firebase
     DatabaseReference reviewRef;
 
-    // Data
     List<Review> reviewList;
     ReviewAdapter adapter;
 
-    // Hotel info
-    String hotelName;
-    String hotelAddress;
+    String hotelName, hotelAddress;
     double lat, lng;
 
     @Override
@@ -47,42 +42,39 @@ public class ListReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_review);
 
-        // 🔹 GET HOTEL INFO FROM INTENT
+        // GET HOTEL INFO
         hotelName = getIntent().getStringExtra("hotelName");
         hotelAddress = getIntent().getStringExtra("hotelAddress");
         lat = getIntent().getDoubleExtra("lat", 0);
         lng = getIntent().getDoubleExtra("lng", 0);
 
-        // 🔹 INIT UI
+        // INIT UI
         btnBack = findViewById(R.id.btn_back_arrow);
         txtTitle = findViewById(R.id.txtTitle);
         recyclerView = findViewById(R.id.recyclerView);
         fabAddReview = findViewById(R.id.fab_add_review);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        txtTitle.setText("Reviews");
+        // Set Title to Hotel Name
+        txtTitle.setText(hotelName != null ? hotelName : "Reviews");
 
-        // 🔹 BACK BUTTON
         btnBack.setOnClickListener(v -> finish());
 
-        // 🔹 RECYCLER VIEW
+        // RECYCLER VIEW
         reviewList = new ArrayList<>();
-        adapter = new ReviewAdapter(
-                reviewList,
-                false, // ❌ hide delete button
-                null
-        );
 
+        // NOTE: Ensure your ReviewAdapter uses the 'cutoff' logic
+        // inside its onBindViewHolder method to display the reviewer's name.
+        adapter = new ReviewAdapter(reviewList, false, null);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // 🔹 FIREBASE
+        // FIREBASE
         reviewRef = FirebaseDatabase.getInstance().getReference("reviews");
-
         loadReviews();
 
-        // 🔹 ADD REVIEW BUTTON
+        // ADD REVIEW BUTTON
         fabAddReview.setOnClickListener(v -> {
             Intent intent = new Intent(ListReviewActivity.this, CreateReviewActivity.class);
             intent.putExtra("hotelName", hotelName);
@@ -92,55 +84,61 @@ public class ListReviewActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // 🔹 BOTTOM NAVIGATION
-        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigationView.setSelectedItemId(R.id.nav_home); // Usually reviews are accessed from Home
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+            Intent intent = null;
 
             if (id == R.id.nav_home) {
-                startActivity(new Intent(this, HomePage.class));
-                return true;
+                intent = new Intent(this, HomePage.class);
+            } else if (id == R.id.nav_maps) {
+                intent = new Intent(this, MapsActivity.class);
+            } else if (id == R.id.nav_profile) {
+                intent = new Intent(this, UserProfileActivity.class);
             }
-            else if (id == R.id.nav_maps) {
-                startActivity(new Intent(this, MapsActivity.class));
-                return true;
-            }
-            else if (id == R.id.nav_profile) {
-                startActivity(new Intent(this, UserProfileActivity.class));
+
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
                 return true;
             }
             return false;
         });
     }
 
-    // 🔹 LOAD REVIEWS FOR SELECTED HOTEL
     private void loadReviews() {
-
+        // Query reviews that match this specific hotel name
         reviewRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 reviewList.clear();
-
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Review review = ds.getValue(Review.class);
 
-                    if (review != null &&
-                            review.hotelName != null &&
-                            review.hotelName.equals(hotelName)) {
+                    if (review != null && review.hotelName != null && review.hotelName.equals(hotelName)) {
+
+                        // 🔹 APPLY CUTOFF LOGIC TO THE REVIEWER NAME BEFORE ADDING TO LIST
+                        if (review.userEmail != null && review.userEmail.contains("@")) {
+                            String cleanName = review.userEmail.split("@")[0].replaceAll("[0-9]", "");
+                            if (!cleanName.isEmpty()) {
+                                cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1);
+                                review.userEmail = cleanName; // Temporarily overwrite for display
+                            }
+                        }
 
                         reviewList.add(review);
                     }
                 }
-
                 adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // optional: show toast/log
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 }

@@ -5,13 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    // UI
+    // UI Components
     ImageView imgUser, btnMenu, btnBack;
     TextView txtEmail, txtReviewCount;
     RecyclerView recyclerReviews;
@@ -46,7 +46,7 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        // 🔹 Firebase Auth
+        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -55,7 +55,7 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔹 Views
+        // Initialize Views
         imgUser = findViewById(R.id.imgUser);
         btnMenu = findViewById(R.id.btnMenu);
         txtEmail = findViewById(R.id.txtEmail);
@@ -63,9 +63,10 @@ public class UserProfileActivity extends AppCompatActivity {
         recyclerReviews = findViewById(R.id.recyclerReviews);
         btnBack = findViewById(R.id.btn_back_arrow);
 
-        txtEmail.setText(user.getEmail());
+        // Display formatted name initially
+        updateDisplayName(user.getEmail());
 
-        // 🔹 Back button
+        // Back button logic
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(this, HomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -73,58 +74,71 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // 🔹 Database references
-        userRef = FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(user.getUid());
+        // Database references
+        userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+        reviewRef = FirebaseDatabase.getInstance().getReference("reviews");
 
-        reviewRef = FirebaseDatabase.getInstance()
-                .getReference("reviews");
-
-        // 🔹 RecyclerView
+        // Set up RecyclerView
         reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(
                 reviewList,
-                true, // show delete button
+                true, // Show delete button
                 review -> {
                     reviewRef.child(review.reviewId)
                             .removeValue()
                             .addOnSuccessListener(unused ->
-                                    Toast.makeText(this,
-                                            "Review deleted",
-                                            Toast.LENGTH_SHORT).show());
+                                    Toast.makeText(this, "Review deleted", Toast.LENGTH_SHORT).show());
                 }
         );
 
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
         recyclerReviews.setAdapter(adapter);
 
-        // 🔹 Load data
+        // Load data from Firebase
         loadUserProfile();
         loadUserReviews();
 
-        // 🔹 Click profile photo → Edit profile
+        // Photo Click → Edit Profile
         imgUser.setOnClickListener(v ->
                 startActivity(new Intent(this, EditProfileActivity.class))
         );
 
-        // 🔹 Menu
+        // Menu Click
         btnMenu.setOnClickListener(v -> showMenu());
     }
 
-    // 🔹 Load user profile (REALTIME)
+    // New helper method to format the email into a clean name
+    private void updateDisplayName(String email) {
+        if (email != null && email.contains("@")) {
+            // 1. Get part before @ (e.g., "john123@email.com" -> "john123")
+            String name = email.split("@")[0];
+
+            // 2. Remove all numbers (e.g., "john123" -> "john")
+            name = name.replaceAll("[0-9]", "");
+
+            // 3. Capitalize first letter (e.g., "john" -> "John")
+            if (!name.isEmpty()) {
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                txtEmail.setText(name);
+            } else {
+                // Fallback if email was all numbers (e.g., 123@email.com)
+                txtEmail.setText("User");
+            }
+        }
+    }
+
     private void loadUserProfile() {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 if (!snapshot.exists()) return;
 
-                // Email
-                String email = snapshot.child("email").getValue(String.class);
-                if (email != null) txtEmail.setText(email);
+                // Refresh the name from auth email
+                if (user != null) {
+                    updateDisplayName(user.getEmail());
+                }
 
-                // Profile photo
+                // Load Profile photo via Glide
                 String photoUri = snapshot.child("photoUri").getValue(String.class);
                 if (photoUri != null && !photoUri.isEmpty()) {
                     Glide.with(UserProfileActivity.this)
@@ -138,69 +152,53 @@ public class UserProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(UserProfileActivity.this,
-                        "Failed to load profile",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserProfileActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // 🔹 Load user's reviews
     private void loadUserReviews() {
         reviewRef.orderByChild("userId")
                 .equalTo(user.getUid())
                 .addValueEventListener(new ValueEventListener() {
-
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         reviewList.clear();
-
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Review review = ds.getValue(Review.class);
                             if (review != null) reviewList.add(review);
                         }
-
                         txtReviewCount.setText(reviewList.size() + " reviews");
                         adapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(UserProfileActivity.this,
-                                "Failed to load reviews",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserProfileActivity.this, "Failed to load reviews", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // 🔹 Popup menu
     private void showMenu() {
         PopupMenu popupMenu = new PopupMenu(this, btnMenu);
-        popupMenu.getMenuInflater()
-                .inflate(R.menu.menu_user_profile, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.menu_user_profile, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
-
-            if (item.getItemId() == R.id.menu_edit_profile) {
+            int id = item.getItemId();
+            if (id == R.id.menu_edit_profile) {
                 startActivity(new Intent(this, EditProfileActivity.class));
                 return true;
-            }
-
-            if (item.getItemId() == R.id.menu_about_us) {
+            } else if (id == R.id.menu_about_us) {
                 startActivity(new Intent(this, AboutUsActivity.class));
                 return true;
-            }
-
-            if (item.getItemId() == R.id.menu_logout) {
+            } else if (id == R.id.menu_logout) {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
                 return true;
             }
-
             return false;
         });
-
         popupMenu.show();
     }
 }
