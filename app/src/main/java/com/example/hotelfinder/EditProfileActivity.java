@@ -89,6 +89,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Save
         btnSave.setOnClickListener(v -> saveProfile());
+
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
+
     }
 
     private void loadProfilePhoto() {
