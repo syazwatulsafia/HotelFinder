@@ -5,7 +5,11 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +32,8 @@ public class EditProfileActivity extends AppCompatActivity {
     DatabaseReference userRef;
 
     Uri selectedImageUri;
+    String photoUrl;
+
 
     // 🔹 IMAGE PICKER
     ActivityResultLauncher<String> imagePicker =
@@ -56,11 +62,13 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        // Views
         imgProfile = findViewById(R.id.imgProfileEdit);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnSave = findViewById(R.id.btnSaveProfile);
 
+        // Firebase
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         userRef = FirebaseDatabase.getInstance().getReference("users");
@@ -70,28 +78,37 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔹 PRE-FILL EMAIL
+        // 🔹 EMAIL (DISPLAY ONLY)
         edtEmail.setText(user.getEmail());
+        edtEmail.setEnabled(false);          // ❌ cannot edit
+        edtEmail.setAlpha(0.6f);             // visual hint
 
-        // 🔹 LOAD PROFILE IMAGE (IF EXISTS)
-        userRef.child(user.getUid()).child("photoUri")
+        // 🔹 LOAD PROFILE IMAGE (REALTIME DB)
+        userRef.child(user.getUid()).child("photoUrl")
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
-                        String uri = snapshot.getValue(String.class);
-                        Glide.with(this)
-                                .load(uri)
-                                .circleCrop()
-                                .into(imgProfile);
+                        photoUrl = snapshot.getValue(String.class);
+
+                        if (photoUrl != null && !photoUrl.isEmpty()) {
+                            Glide.with(EditProfileActivity.this)
+                                    .load(photoUrl)
+                                    .placeholder(R.drawable.ic_profile_placeholder)
+                                    .circleCrop()
+                                    .into(imgProfile);
+                        }
                     }
                 });
 
+
+        // Click profile photo → pick image
         imgProfile.setOnClickListener(v -> checkPermission());
 
+        // Save button
         btnSave.setOnClickListener(v -> saveProfile());
     }
 
-    // 🔹 ANDROID 12 / 13 PERMISSION HANDLING
+    // 🔹 PERMISSION HANDLING
     private void checkPermission() {
 
         if (Build.VERSION.SDK_INT >= 33) {
@@ -122,27 +139,21 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    // 🔹 SAVE PROFILE (PHOTO / EMAIL / PASSWORD OPTIONAL)
+    // 🔹 SAVE PROFILE (PHOTO + PASSWORD ONLY)
     private void saveProfile() {
 
-        String newEmail = edtEmail.getText().toString().trim();
         String newPassword = edtPassword.getText().toString().trim();
 
-        // UPDATE EMAIL
-        if (!newEmail.isEmpty() && !newEmail.equals(user.getEmail())) {
-            user.updateEmail(newEmail)
-                    .addOnSuccessListener(unused ->
-                            userRef.child(user.getUid())
-                                    .child("email")
-                                    .setValue(newEmail));
-        }
-
-        // UPDATE PASSWORD (OPTIONAL)
+        // 🔹 UPDATE PASSWORD (OPTIONAL)
         if (!newPassword.isEmpty()) {
-            user.updatePassword(newPassword);
+            user.updatePassword(newPassword)
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this,
+                                    "Password update failed",
+                                    Toast.LENGTH_SHORT).show());
         }
 
-        // UPDATE PROFILE PHOTO (OPTIONAL)
+        // 🔹 UPDATE PROFILE PHOTO (OPTIONAL)
         if (selectedImageUri != null) {
             userRef.child(user.getUid())
                     .child("photoUri")
