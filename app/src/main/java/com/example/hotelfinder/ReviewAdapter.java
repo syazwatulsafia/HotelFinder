@@ -12,6 +12,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import android.net.Uri;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 import com.bumptech.glide.Glide;
 
@@ -92,6 +96,29 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         } else {
             holder.btnDelete.setVisibility(View.GONE);
         }
+
+// LOAD USER PROFILE IMAGE
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(review.userId)
+                .child("photoUri");
+
+        userRef.get().addOnSuccessListener(snapshot -> {
+            if (snapshot.exists()) {
+                String photoUri = snapshot.getValue(String.class);
+
+                if (photoUri != null && !photoUri.isEmpty()) {
+                    Glide.with(holder.itemView.getContext())
+                            .load(Uri.parse(photoUri))
+                            .circleCrop()
+                            .into(holder.imgUserProfile);
+                } else {
+                    holder.imgUserProfile.setImageResource(
+                            R.drawable.ic_profile_placeholder);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -106,11 +133,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         RatingBar ratingBar;
         ImageView imgReview;
         Button btnDelete;
+        ImageView imgUserProfile;
+
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             txtUserEmail    = itemView.findViewById(R.id.txtUserEmail);
+            imgUserProfile = itemView.findViewById(R.id.imgUserProfile);
             txtHotelName    = itemView.findViewById(R.id.txtHotelName);
             txtHotelAddress = itemView.findViewById(R.id.txtHotelAddress);
             txtComment      = itemView.findViewById(R.id.txtComment);
