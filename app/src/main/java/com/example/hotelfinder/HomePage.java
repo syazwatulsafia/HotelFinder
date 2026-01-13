@@ -86,4 +86,14 @@ public class HomePage extends AppCompatActivity {
             return false;
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        BottomNavigationView bottomNavigationView =
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+    }
+
 }
