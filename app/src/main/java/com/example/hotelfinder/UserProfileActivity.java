@@ -1,17 +1,17 @@
 package com.example.hotelfinder;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.net.Uri;
 
 public class UserProfileActivity extends AppCompatActivity {
 
@@ -47,15 +46,7 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        ImageView btnBack = findViewById(R.id.btn_back_arrow);
-        btnBack.setOnClickListener(v -> {
-            Intent intent = new Intent(UserProfileActivity.this, HomePage.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
-
-        // Firebase
+        // 🔹 Firebase Auth
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -64,22 +55,25 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Views
+        // 🔹 Views
         imgUser = findViewById(R.id.imgUser);
         btnMenu = findViewById(R.id.btnMenu);
         txtEmail = findViewById(R.id.txtEmail);
         txtReviewCount = findViewById(R.id.txtReviewCount);
         recyclerReviews = findViewById(R.id.recyclerReviews);
+        btnBack = findViewById(R.id.btn_back_arrow);
 
         txtEmail.setText(user.getEmail());
 
-        // RecyclerView
-        reviewList = new ArrayList<>();
-        adapter = new ReviewAdapter(reviewList);
-        recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
-        recyclerReviews.setAdapter(adapter);
+        // 🔹 Back button
+        btnBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, HomePage.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        });
 
-        // Database refs
+        // 🔹 Database references
         userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(user.getUid());
@@ -87,61 +81,69 @@ public class UserProfileActivity extends AppCompatActivity {
         reviewRef = FirebaseDatabase.getInstance()
                 .getReference("reviews");
 
+        // 🔹 RecyclerView
+        reviewList = new ArrayList<>();
+        adapter = new ReviewAdapter(
+                reviewList,
+                true, // show delete button
+                review -> {
+                    reviewRef.child(review.reviewId)
+                            .removeValue()
+                            .addOnSuccessListener(unused ->
+                                    Toast.makeText(this,
+                                            "Review deleted",
+                                            Toast.LENGTH_SHORT).show());
+                }
+        );
+
+        recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
+        recyclerReviews.setAdapter(adapter);
+
+        // 🔹 Load data
         loadUserProfile();
         loadUserReviews();
 
-        // Edit profile on image click
+        // 🔹 Click profile photo → Edit profile
         imgUser.setOnClickListener(v ->
                 startActivity(new Intent(this, EditProfileActivity.class))
         );
 
-        // Menu
+        // 🔹 Menu
         btnMenu.setOnClickListener(v -> showMenu());
     }
 
-    // 🔹 Load profile photo (REALTIME)
+    // 🔹 Load user profile (REALTIME)
     private void loadUserProfile() {
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-        userRef.child(user.getUid())
-                .addValueEventListener(new ValueEventListener() {
+                if (!snapshot.exists()) return;
 
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Email
+                String email = snapshot.child("email").getValue(String.class);
+                if (email != null) txtEmail.setText(email);
 
-                        if (snapshot.exists()) {
+                // Profile photo
+                String photoUri = snapshot.child("photoUri").getValue(String.class);
+                if (photoUri != null && !photoUri.isEmpty()) {
+                    Glide.with(UserProfileActivity.this)
+                            .load(Uri.parse(photoUri))
+                            .circleCrop()
+                            .into(imgUser);
+                } else {
+                    imgUser.setImageResource(R.drawable.ic_profile_placeholder);
+                }
+            }
 
-                            // EMAIL
-                            String email = snapshot.child("email")
-                                    .getValue(String.class);
-                            if (email != null) {
-                                txtEmail.setText(email);
-                            }
-
-                            // PROFILE PHOTO
-                            String photoUri = snapshot.child("photoUri")
-                                    .getValue(String.class);
-
-                            if (photoUri != null && !photoUri.isEmpty()) {
-                                Glide.with(UserProfileActivity.this)
-                                        .load(Uri.parse(photoUri))
-                                        .circleCrop()
-                                        .into(imgUser);
-                            } else {
-                                imgUser.setImageResource(
-                                        R.drawable.ic_profile_placeholder);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(UserProfileActivity.this,
-                                "Failed to load profile",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(UserProfileActivity.this,
+                        "Failed to load profile",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
 
     // 🔹 Load user's reviews
     private void loadUserReviews() {
@@ -155,9 +157,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                         for (DataSnapshot ds : snapshot.getChildren()) {
                             Review review = ds.getValue(Review.class);
-                            if (review != null) {
-                                reviewList.add(review);
-                            }
+                            if (review != null) reviewList.add(review);
                         }
 
                         txtReviewCount.setText(reviewList.size() + " reviews");
@@ -176,25 +176,28 @@ public class UserProfileActivity extends AppCompatActivity {
     // 🔹 Popup menu
     private void showMenu() {
         PopupMenu popupMenu = new PopupMenu(this, btnMenu);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_user_profile, popupMenu.getMenu());
+        popupMenu.getMenuInflater()
+                .inflate(R.menu.menu_user_profile, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
 
-            if (id == R.id.menu_edit_profile) {
+            if (item.getItemId() == R.id.menu_edit_profile) {
                 startActivity(new Intent(this, EditProfileActivity.class));
                 return true;
             }
-            else if (id == R.id.menu_about_us) {
+
+            if (item.getItemId() == R.id.menu_about_us) {
                 startActivity(new Intent(this, AboutUsActivity.class));
                 return true;
             }
-            else if (id == R.id.menu_logout) {
+
+            if (item.getItemId() == R.id.menu_logout) {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
                 return true;
             }
+
             return false;
         });
 

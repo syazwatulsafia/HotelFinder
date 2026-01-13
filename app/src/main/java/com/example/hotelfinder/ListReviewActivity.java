@@ -67,7 +67,12 @@ public class ListReviewActivity extends AppCompatActivity {
 
         // 🔹 RECYCLER VIEW
         reviewList = new ArrayList<>();
-        adapter = new ReviewAdapter(reviewList);
+        adapter = new ReviewAdapter(
+                reviewList,
+                false, // ❌ hide delete button
+                null
+        );
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

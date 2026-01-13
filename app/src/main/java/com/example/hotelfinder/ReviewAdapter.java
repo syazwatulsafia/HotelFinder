@@ -1,9 +1,11 @@
 package com.example.hotelfinder;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,9 +20,16 @@ import java.util.List;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     private List<Review> reviewList;
+    private OnDeleteClickListener deleteListener;
+    private boolean showDelete;
 
-    public ReviewAdapter(List<Review> reviewList) {
+    // ✅ Constructor
+    public ReviewAdapter(List<Review> reviewList,
+                         boolean showDelete,
+                         OnDeleteClickListener listener) {
         this.reviewList = reviewList;
+        this.showDelete = showDelete;
+        this.deleteListener = listener;
     }
 
     @NonNull
@@ -36,12 +45,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
         Review review = reviewList.get(position);
 
+        // 🔹 Bind data
         holder.txtUserEmail.setText(review.userEmail);
         holder.txtHotelName.setText(review.hotelName);
         holder.txtHotelAddress.setText(review.hotelAddress);
         holder.txtComment.setText(review.comment);
         holder.ratingBar.setRating(review.rating);
 
+        // 🔹 Review image (if exists)
         if (review.imageUri != null && !review.imageUri.isEmpty()) {
             holder.imgReview.setVisibility(View.VISIBLE);
             Glide.with(holder.itemView.getContext())
@@ -50,6 +61,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         } else {
             holder.imgReview.setVisibility(View.GONE);
         }
+
+        // 🔹 Hotel click → detail
         holder.txtHotelName.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
             intent.putExtra("name", review.hotelName);
@@ -59,30 +72,56 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             v.getContext().startActivity(intent);
         });
 
+        // 🔹 Delete button (UserProfileActivity only)
+        if (showDelete) {
+            holder.btnDelete.setVisibility(View.VISIBLE);
+
+            holder.btnDelete.setOnClickListener(v -> {
+                new AlertDialog.Builder(v.getContext())
+                        .setTitle("Delete Review")
+                        .setMessage("Are you sure you want to delete this review?")
+                        .setPositiveButton("Delete", (d, w) -> {
+                            if (deleteListener != null) {
+                                deleteListener.onDelete(review);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            });
+
+        } else {
+            holder.btnDelete.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return reviewList.size(); // ✅ FIXED
+        return reviewList.size();
     }
 
+    // 🔹 ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtUserEmail, txtHotelName, txtHotelAddress, txtComment;
-
         RatingBar ratingBar;
         ImageView imgReview;
+        Button btnDelete;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            txtUserEmail   = itemView.findViewById(R.id.txtUserEmail);
-            txtHotelName   = itemView.findViewById(R.id.txtHotelName);
-            txtHotelAddress= itemView.findViewById(R.id.txtHotelAddress);
-            txtComment     = itemView.findViewById(R.id.txtComment);
-            ratingBar      = itemView.findViewById(R.id.ratingBar);
-            imgReview      = itemView.findViewById(R.id.imgReview);
-
+            txtUserEmail    = itemView.findViewById(R.id.txtUserEmail);
+            txtHotelName    = itemView.findViewById(R.id.txtHotelName);
+            txtHotelAddress = itemView.findViewById(R.id.txtHotelAddress);
+            txtComment      = itemView.findViewById(R.id.txtComment);
+            ratingBar       = itemView.findViewById(R.id.ratingBar);
+            imgReview       = itemView.findViewById(R.id.imgReview);
+            btnDelete       = itemView.findViewById(R.id.btnDelete);
         }
+    }
+
+    // 🔹 Delete interface
+    public interface OnDeleteClickListener {
+        void onDelete(Review review);
     }
 }
