@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF6F3">
 
-    <!-- HEADER -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:background="#FFF6F3"
         android:paddingHorizontal="8dp">
 
         <ImageView
@@ -21,8 +20,8 @@
             android:layout_centerVertical="true"
             android:padding="12dp"
             android:src="@drawable/back_button"
-            app:tint="#000000"
-            android:contentDescription="Back" />
+            android:contentDescription="Go back"
+            app:tint="#000000" />
 
         <TextView
             android:id="@+id/txtTitle"
@@ -33,44 +32,43 @@
             android:textAllCaps="true"
             android:letterSpacing="0.1"
             android:textColor="#000000"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
-    <!-- BOTTOM NAV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#FFFFFF"
-        app:elevation="12dp"
-        app:itemIconTint="#000000"
-        app:itemTextColor="#000000"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
         app:menu="@menu/bottom_nav_menu" />
 
-    <!-- REVIEW LIST -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header"
         android:layout_above="@id/bottom_navigation"
+        android:layout_below="@id/header"
         android:clipToPadding="false"
-        android:padding="16dp" />
+        android:padding="16dp"
+        tools:listitem="@layout/item_review" />
 
-    <!-- ADD REVIEW BUTTON -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_navigation"
         android:layout_alignParentEnd="true"
-        android:layout_margin="24dp"
-        android:contentDescription="Add Review"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Add new review"
         android:src="@android:drawable/ic_input_add"
         app:backgroundTint="#000000"
-        app:tint="#FFFFFF"
-        app:elevation="4dp" />
+        app:elevation="6dp"
+        app:tint="#FFFFFF" />
 
 </RelativeLayout>
