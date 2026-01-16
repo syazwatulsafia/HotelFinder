@@ -53,7 +53,7 @@ public class HomePage extends AppCompatActivity {
                 name = name.replaceAll("[0-9]", "");
 
                 if (!name.isEmpty()) {
-                    name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    name = name.substring(0, 1) + name.substring(1);
                     welcomeTitle.setText( name + "!");
                 }
             }

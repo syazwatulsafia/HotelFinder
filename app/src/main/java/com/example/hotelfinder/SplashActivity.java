@@ -19,7 +19,6 @@ public class SplashActivity extends Activity {
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splashscreen);
         videoView.setVideoURI(videoUri);
 
-        // Start video and set it to loop
         videoView.setOnPreparedListener(mp -> {
             mp.setLooping(true);
             mp.setVideoScalingMode(android.media.MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);

@@ -32,7 +32,6 @@ public class ReminderActivity extends AppCompatActivity {
         Button btnSet = findViewById(R.id.btnSetAlarm);
         ImageView btnBack = findViewById(R.id.btn_back_arrow);
 
-        // 1. Back button logic
         btnBack.setOnClickListener(v -> finish());
 
         datePicker.setMinDate(System.currentTimeMillis() - 1000);

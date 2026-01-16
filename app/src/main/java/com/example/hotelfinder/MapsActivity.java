@@ -1,14 +1,21 @@
 package com.example.hotelfinder;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,20 +28,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.example.hotelfinder.databinding.ActivityMapsBinding;
-import java.util.ArrayList;
-import java.util.List;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import android.location.Address;
-import android.location.Geocoder;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.example.hotelfinder.databinding.ActivityMapsBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -45,6 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Circle rangeCircle;
     private List<Hotel> hotelList = new ArrayList<>();
     private HotelAdapter hotelAdapter;
+
     private static final int LOCATION_REQUEST = 100;
     private static final String API_KEY = "AIzaSyBKpSvu4pYLp6Jh1PPbBr6HFPstRUzhnCU";
 
@@ -55,132 +61,68 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Initialize Map
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        locationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        setupRecyclerView();
+        setupNavigation();
+
         binding.btnSearchLocation.setOnClickListener(v -> {
             String location = binding.etSearchLocation.getText().toString().trim();
             if (!location.isEmpty()) {
                 searchLocationByName(location);
             }
         });
-
-        locationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        setupRecyclerView();
-
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        // Highlight Maps icon
-        bottomNavigationView.setSelectedItemId(R.id.nav_maps);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_home) {
-                startActivity(new Intent(MapsActivity.this, HomePage.class));
-                finish(); // optional, to prevent multiple stacked activities
-                return true;
-            } else if (id == R.id.nav_maps) {
-                // Already on Maps
-                return true;
-            } else if (id == R.id.nav_profile) {
-                startActivity(new Intent(MapsActivity.this, UserProfileActivity.class));
-                finish(); // optional
-                return true;
-            }
-            return false;
-        });
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(false);
 
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_REQUEST);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
             return;
         }
 
         mMap.setMyLocationEnabled(true);
         getCurrentLocation();
-
-        mMap.setOnMarkerClickListener(marker -> {
-            // Just show info window, do nothing else
-            marker.showInfoWindow();
-            return true;
-        });
     }
 
-    private void searchLocationByName(String locationName) {
-        Geocoder geocoder = new Geocoder(this);
-        try {
-            List<Address> addressList = geocoder.getFromLocationName(locationName, 1);
+    private void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    updateMapAndSearch();
+                }
+            });
+        }
+    }
 
-            if (addressList == null || addressList.isEmpty()) {
-                Toast.makeText(this, "Location not found", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Address address = addressList.get(0);
-            currentLatLng = new LatLng(address.getLatitude(), address.getLongitude());
-
-            // Move camera
+    private void updateMapAndSearch() {
+        if (mMap != null && currentLatLng != null) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-
-            // Update range circle
             drawRangeCircle(currentLatLng, 1000);
-
-            // Clear old markers
-            mMap.clear();
-
-            // Search hotels from new location
             searchNearbyHotels();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Search failed", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void drawRangeCircle(LatLng center, double radiusMeters) {
-
-        // Remove previous circle if exists
-        if (rangeCircle != null) {
-            rangeCircle.remove();
-        }
+        if (rangeCircle != null) rangeCircle.remove();
 
         rangeCircle = mMap.addCircle(new CircleOptions()
                 .center(center)
-                .radius(radiusMeters) // meters
-                .strokeWidth(4f)
-                .strokeColor(0x55007AFF) // blue stroke
-                .fillColor(0x22007AFF)); // light blue fill
-    }
-
-    private void getCurrentLocation() {
-        locationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null && mMap != null) {
-
-                currentLatLng = new LatLng(
-                        location.getLatitude(),
-                        location.getLongitude()
-                );
-
-                // Move camera to current location
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-
-                // 1 km range circle
-                drawRangeCircle(currentLatLng, 1000);
-
-                // Search hotels
-                searchNearbyHotels();
-            }
-        });
+                .radius(radiusMeters)
+                .strokeWidth(5f)
+                .strokeColor(0xFF759EA5) // Brand Teal
+                .fillColor(0x22759EA5));
     }
 
     private void searchNearbyHotels() {
@@ -189,124 +131,103 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 "&radius=2000&type=lodging&keyword=hotel&key=" + API_KEY;
 
         RequestQueue queue = Volley.newRequestQueue(this);
-
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
                         JSONArray results = response.getJSONArray("results");
                         hotelList.clear();
-
                         mMap.clear();
                         drawRangeCircle(currentLatLng, 1000);
 
                         for (int i = 0; i < results.length(); i++) {
                             JSONObject hotel = results.getJSONObject(i);
-                            JSONObject loc = hotel.getJSONObject("geometry")
-                                    .getJSONObject("location");
+                            JSONObject loc = hotel.getJSONObject("geometry").getJSONObject("location");
+                            LatLng latLng = new LatLng(loc.getDouble("lat"), loc.getDouble("lng"));
 
-                            LatLng latLng = new LatLng(
-                                    loc.getDouble("lat"),
-                                    loc.getDouble("lng")
-                            );
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(hotel.getString("name")));
 
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(hotel.getString("name"))
-                                    .snippet(hotel.optString("vicinity")));
+                            float[] dist = new float[1];
+                            Location.distanceBetween(currentLatLng.latitude, currentLatLng.longitude, latLng.latitude, latLng.longitude, dist);
 
-                            float[] distanceResult = new float[1];
-                            Location.distanceBetween(
-                                    currentLatLng.latitude,
-                                    currentLatLng.longitude,
-                                    latLng.latitude,
-                                    latLng.longitude,
-                                    distanceResult
-                            );
+                            String photoRef = hotel.has("photos") ? hotel.getJSONArray("photos").getJSONObject(0).getString("photo_reference") : null;
 
-                            float distanceKm = distanceResult[0] / 1000f;
-
-                            JSONArray photos = hotel.optJSONArray("photos");
-                            String photoRef = null;
-                            if (photos != null && photos.length() > 0) {
-                                photoRef = photos.getJSONObject(0).getString("photo_reference");
-                            }
-
-                            String placeId = hotel.getString("place_id");
-
-                            Hotel h = new Hotel(
-                                    hotel.getString("name"),
-                                    hotel.optString("vicinity"),
-                                    latLng,
-                                    distanceKm,
-                                    photoRef,
-                                    placeId
-                            );
-
-                            hotelList.add(h);
+                            hotelList.add(new Hotel(hotel.getString("name"), hotel.optString("vicinity"), latLng, dist[0] / 1000f, photoRef, hotel.getString("place_id")));
                         }
-
-                        // ✅ Notify AFTER loop
                         hotelAdapter.notifyDataSetChanged();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    } catch (Exception e) { e.printStackTrace(); }
                 },
-
-                error -> Toast.makeText(this,
-                        "Failed to load hotels", Toast.LENGTH_SHORT).show());
-
+                error -> Toast.makeText(this, "Failed to load hotels", Toast.LENGTH_SHORT).show());
         queue.add(request);
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == LOCATION_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                if (ActivityCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                    mMap.setMyLocationEnabled(true); // enables current location
-                    getCurrentLocation();
-                }
-
-            } else {
-                Toast.makeText(this, "Location permission denied!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 
     private void setupRecyclerView() {
         hotelAdapter = new HotelAdapter(hotelList, new HotelAdapter.OnHotelClickListener() {
             @Override
             public void onHotelSelected(Hotel hotel) {
-                // Navigate to HotelDetailActivity
                 Intent intent = new Intent(MapsActivity.this, HotelDetailActivity.class);
-                intent.putExtra("name", hotel.name);
-                intent.putExtra("lat", hotel.location.latitude);
-                intent.putExtra("lng", hotel.location.longitude);
-                intent.putExtra("address", hotel.address);
-                intent.putExtra("photoRef", hotel.photoReference);
                 intent.putExtra("placeId", hotel.placeId);
                 startActivity(intent);
             }
 
             @Override
             public void onHotelFocused(Hotel hotel) {
-                // Move map camera to hotel location
-                if (mMap != null) {
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(hotel.location, 16));
-                }
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(hotel.location, 17));
             }
         });
 
-        binding.rvHotels.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        binding.rvHotels.setLayoutManager(layoutManager);
         binding.rvHotels.setAdapter(hotelAdapter);
+
+        // --- SNAP TO CENTER LOGIC ---
+        SnapHelper snapHelper = new PagerSnapHelper();
+        binding.rvHotels.setOnFlingListener(null);
+        snapHelper.attachToRecyclerView(binding.rvHotels);
+
+        // --- AUTO-MOVE MAP ON SWIPE ---
+        binding.rvHotels.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    View centerView = snapHelper.findSnapView(layoutManager);
+                    if (centerView != null) {
+                        int pos = layoutManager.getPosition(centerView);
+                        if (pos != RecyclerView.NO_POSITION && pos < hotelList.size()) {
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(hotelList.get(pos).location, 16));
+                        }
+                    }
+                }
+            }
+        });
     }
 
+    private void searchLocationByName(String locationName) {
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            List<Address> addressList = geocoder.getFromLocationName(locationName, 1);
+            if (addressList != null && !addressList.isEmpty()) {
+                currentLatLng = new LatLng(addressList.get(0).getLatitude(), addressList.get(0).getLongitude());
+                updateMapAndSearch();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
 
+    private void setupNavigation() {
+        binding.bottomNavigation.setSelectedItemId(R.id.nav_maps);
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) { startActivity(new Intent(this, HomePage.class)); return true; }
+            if (id == R.id.nav_profile) { startActivity(new Intent(this, UserProfileActivity.class)); return true; }
+            return id == R.id.nav_maps;
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            onMapReady(mMap);
+        }
+    }
 }

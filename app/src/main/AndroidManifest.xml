@@ -4,16 +4,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -35,9 +34,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelFinder"
         tools:targetApi="31">
-        <activity
-            android:name=".ReminderActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -48,61 +44,40 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" />
+        <activity android:name=".RegisterActivity" android:exported="false" />
+
+        <activity android:name=".HomePage" android:exported="false" />
         <activity
-            android:name=".ListReviewActivity"
-            android:exported="false" />
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".HotelDetailActivity" android:exported="false" />
+
+        <activity android:name=".ListReviewActivity" android:exported="false" />
+        <activity android:name=".ReviewSuccessActivity" android:exported="false" />
         <activity
             android:name=".CreateReviewActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".HomePage"
-            android:exported="false" />
-        <activity
-            android:name=".HotelDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AboutUsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TeamActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ReviewSuccessActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".UserProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EditProfileActivity"
-            android:exported="false" />
-        <activity android:name=".ReminderActivity"
-            android:exported="false" />
+
+        <activity android:name=".ProfileActivity" android:exported="false" />
+        <activity android:name=".UserProfileActivity" android:exported="false" />
+        <activity android:name=".EditProfileActivity" android:exported="false" />
+
+        <activity android:name=".ReminderActivity" android:exported="false" />
+        <activity android:name=".AboutUsActivity" android:exported="false" />
+
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
-            android:exported="false">
-        </receiver>
-    </application>
+            android:exported="false" />
 
+    </application>
 </manifest>

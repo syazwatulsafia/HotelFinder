@@ -27,17 +27,12 @@ import java.util.List;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    // UI Components
     ImageView imgUser, btnMenu, btnBack;
     TextView txtEmail, txtReviewCount;
     RecyclerView recyclerReviews;
-
-    // Firebase
     FirebaseAuth auth;
     FirebaseUser user;
     DatabaseReference userRef, reviewRef;
-
-    // Adapter
     List<Review> reviewList;
     ReviewAdapter adapter;
 
@@ -46,7 +41,6 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -55,7 +49,6 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize Views
         imgUser = findViewById(R.id.imgUser);
         btnMenu = findViewById(R.id.btnMenu);
         txtEmail = findViewById(R.id.txtEmail);
@@ -63,10 +56,8 @@ public class UserProfileActivity extends AppCompatActivity {
         recyclerReviews = findViewById(R.id.recyclerReviews);
         btnBack = findViewById(R.id.btn_back_arrow);
 
-        // Display formatted name initially
         updateDisplayName(user.getEmail());
 
-        // Back button logic
         btnBack.setOnClickListener(v -> {
             Intent intent = new Intent(this, HomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -74,15 +65,13 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // Database references
         userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
         reviewRef = FirebaseDatabase.getInstance().getReference("reviews");
 
-        // Set up RecyclerView
         reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(
                 reviewList,
-                true, // Show delete button
+                true,
                 review -> {
                     reviewRef.child(review.reviewId)
                             .removeValue()
@@ -94,36 +83,20 @@ public class UserProfileActivity extends AppCompatActivity {
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
         recyclerReviews.setAdapter(adapter);
 
-        // Load data from Firebase
         loadUserProfile();
         loadUserReviews();
 
-        // Photo Click → Edit Profile
         imgUser.setOnClickListener(v ->
                 startActivity(new Intent(this, EditProfileActivity.class))
         );
 
-        // Menu Click
         btnMenu.setOnClickListener(v -> showMenu());
     }
 
-    // New helper method to format the email into a clean name
     private void updateDisplayName(String email) {
         if (email != null && email.contains("@")) {
-            // 1. Get part before @ (e.g., "john123@email.com" -> "john123")
             String name = email.split("@")[0];
-
-            // 2. Remove all numbers (e.g., "john123" -> "john")
             name = name.replaceAll("[0-9]", "");
-
-            // 3. Capitalize first letter (e.g., "john" -> "John")
-            if (!name.isEmpty()) {
-                name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                txtEmail.setText(name);
-            } else {
-                // Fallback if email was all numbers (e.g., 123@email.com)
-                txtEmail.setText("User");
-            }
         }
     }
 
@@ -133,12 +106,10 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) return;
 
-                // Refresh the name from auth email
                 if (user != null) {
                     updateDisplayName(user.getEmail());
                 }
 
-                // Load Profile photo via Glide
                 String photoUri = snapshot.child("photoUri").getValue(String.class);
                 if (photoUri != null && !photoUri.isEmpty()) {
                     Glide.with(UserProfileActivity.this)

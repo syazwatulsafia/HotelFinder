@@ -20,7 +20,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#FFF6F3">
 
             <View
                 android:id="@+id/headerBg"
@@ -67,6 +68,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
                     android:fontFamily="sans-serif-black" />
+
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
