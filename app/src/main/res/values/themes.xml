@@ -8,4 +8,11 @@
     <style name="Theme.HotelFinder" parent="Base.Theme.HotelFinder" />
     <style name="RoundedImage">
         <item name="cornerSize">50%</item> </style>
+
+    <style name="CustomPickerTheme" parent="Theme.MaterialComponents.Light">
+        <item name="colorAccent">#000000</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+    </style>
+
 </resources>

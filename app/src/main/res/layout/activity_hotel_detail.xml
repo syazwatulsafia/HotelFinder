@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3"
+    android:background="#FFFFFF"
     android:fillViewport="true">
 
     <LinearLayout
@@ -14,15 +14,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:paddingHorizontal="16dp"
-            android:background="#FFF6F3">
+            android:paddingHorizontal="16dp">
 
             <ImageView
                 android:id="@+id/btn_back_arrow"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="start"
-                android:padding="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:padding="12dp"
                 android:src="@drawable/back_button"
                 app:tint="#000000"
                 android:contentDescription="Back" />
@@ -31,10 +30,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:fontFamily="sans-serif-medium"
-                android:text="Details"
+                android:fontFamily="sans-serif-black"
+                android:text="DETAILS"
                 android:textAllCaps="true"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.2"
                 android:textColor="#000000"
                 android:textSize="14sp" />
         </RelativeLayout>
@@ -42,13 +41,14 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="320dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:cardCornerRadius="0dp">
 
             <ImageView
                 android:id="@+id/imgHotel"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#F0EAE8"
+                android:background="#F8F8F8"
                 android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
 
@@ -56,55 +56,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="24dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txtName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="sans-serif-black"
-                    android:text="The Grand Hotel"
-                    android:textColor="#000000"
-                    android:textSize="26sp" />
-
-            </LinearLayout>
+                android:fontFamily="sans-serif-black"
+                android:text="The Grand Hotel"
+                android:textColor="#000000"
+                android:textSize="28sp" />
 
             <TextView
                 android:id="@+id/txtAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:alpha="0.7"
                 android:fontFamily="sans-serif"
                 android:text="123 Luxury Ave, Kuala Lumpur"
-                android:textColor="#000000"
-                android:textSize="14sp" />
+                android:textColor="#666666"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/txtWebsite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="sans-serif-bold"
                 android:text="Visit Official Website"
-                android:textColor="#000000"
+                android:textColor="#759EA5"
                 android:textSize="14sp"
                 android:background="?attr/selectableItemBackground" />
 
             <View
                 android:layout_width="40dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="24dp"
-                android:background="#000000" />
+                android:layout_height="3dp"
+                android:layout_marginTop="32dp"
+                android:background="#759EA5" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -113,48 +103,57 @@
                 android:fontFamily="sans-serif-black"
                 android:text="RESERVATIONS"
                 android:textSize="12sp"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.15"
                 android:textColor="#000000" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCall"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:backgroundTint="#000000"
-                    android:text="CALL HOTEL"
+                    android:text="CALL"
                     android:textColor="#FFFFFF"
-                    app:cornerRadius="4dp" />
+                    android:textStyle="bold"
+                    app:cornerRadius="30dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnNavigate"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:backgroundTint="#000000"
-                    android:text="DIRECTIONS"
+                    android:text="MAP"
                     android:textColor="#FFFFFF"
-                    app:cornerRadius="4dp" />
+                    android:textStyle="bold"
+                    app:cornerRadius="30dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSeeReview"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
                 android:text="VIEW GUEST REVIEWS"
-                android:textColor="#000000"
-                app:cornerRadius="4dp"
-                app:strokeColor="#000000"
-                app:strokeWidth="2dp" />
+                android:textColor="#759EA5"
+                app:cornerRadius="30dp"
+                app:strokeColor="#759EA5"
+                app:strokeWidth="2dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
         </LinearLayout>
     </LinearLayout>

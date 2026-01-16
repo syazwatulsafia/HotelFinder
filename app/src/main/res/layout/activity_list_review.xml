@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3">
+    android:background="#FFFFFF">
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:paddingHorizontal="8dp">
+        android:paddingHorizontal="12dp">
 
         <ImageView
             android:id="@+id/btn_back_arrow"
@@ -23,17 +23,30 @@
             android:contentDescription="Go back"
             app:tint="#000000" />
 
-        <TextView
-            android:id="@+id/txtTitle"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Reviews"
-            android:textAllCaps="true"
-            android:letterSpacing="0.1"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REVIEWS"
+                android:textAllCaps="true"
+                android:letterSpacing="0.2"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black" />
+
+            <View
+                android:layout_width="24dp"
+                android:layout_height="3dp"
+                android:background="#759EA5"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -43,15 +56,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#FFFFFF"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
+        app:elevation="0dp"
+        app:itemIconTint="#000000"
+        app:itemTextColor="#000000"
         app:menu="@menu/bottom_nav_menu" />
+
+    <View
+        android:id="@+id/navDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/bottom_navigation"
+        android:background="#EEEEEE" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottom_navigation"
+        android:layout_above="@id/navDivider"
         android:layout_below="@id/header"
         android:clipToPadding="false"
         android:padding="16dp"
@@ -61,14 +82,16 @@
         android:id="@+id/fab_add_review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottom_navigation"
+        android:layout_above="@id/navDivider"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:contentDescription="Add new review"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#000000"
-        app:elevation="6dp"
-        app:tint="#FFFFFF" />
+        app:backgroundTint="#759EA5"
+        app:elevation="0dp"
+        app:pressedTranslationZ="0dp"
+        app:tint="#FFFFFF"
+        app:borderWidth="0dp" />
 
 </RelativeLayout>

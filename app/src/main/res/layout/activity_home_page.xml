@@ -6,12 +6,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3"
+    android:background="#FFFFFF"
     tools:context=".HomePage">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,9 +32,9 @@
             <View
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:alpha="0.2"
+                android:alpha="0.1"
                 android:background="@drawable/circle_shape"
-                android:backgroundTint="#D1BB9B"
+                android:backgroundTint="#FFFFFF"
                 android:translationX="-50dp"
                 android:translationY="-50dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,8 +55,9 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
                     android:text="Welcome,"
-                    android:textColor="#FFF6F3"
-                    android:textSize="18sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:letterSpacing="0.05"/>
 
                 <TextView
                     android:id="@+id/textViewWelcome"
@@ -64,7 +66,7 @@
                     android:text="Explorer"
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="sans-serif-black" />
             </LinearLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -75,7 +77,9 @@
                 android:layout_marginTop="-60dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="8dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#EEEEEE"
                 app:layout_constraintTop_toBottomOf="@id/headerBg">
 
                 <LinearLayout
@@ -91,9 +95,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Your next stay is just a tap away"
-                        android:textColor="#333333"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textColor="#000000"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:id="@+id/textViewSubDescription"
@@ -101,7 +105,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:gravity="center"
-                        android:lineSpacingExtra="4dp"
                         android:text="Explore premium stays and plan your next adventure with ease."
                         android:textColor="#777777"
                         android:textSize="14sp" />
@@ -111,15 +114,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginTop="32dp"
-                        android:backgroundTint="#333333"
+                        android:backgroundTint="#000000"
                         android:text="Find Hotels Near Me"
-                        android:textAllCaps="false"
+                        android:textAllCaps="true"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:letterSpacing="0.1"
                         android:textStyle="bold"
-                        app:cornerRadius="16dp"
+                        app:cornerRadius="30dp"
                         app:icon="@android:drawable/ic_menu_mylocation"
-                        app:iconGravity="textStart" />
+                        app:iconGravity="textStart"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -129,17 +134,18 @@
                 android:layout_marginTop="24dp"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
-                android:paddingBottom="24dp"
+                android:paddingBottom="40dp"
                 app:layout_constraintTop_toBottomOf="@id/mainCard">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Discover"
-                    android:textColor="#333333"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="DISCOVER"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="0.2"/>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -147,7 +153,9 @@
                     android:layout_marginBottom="12dp"
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp">
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#EEEEEE">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -158,7 +166,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@android:drawable/ic_dialog_map"
-                            app:tint="#d1bb9b" />
+                            app:tint="#759EA5" />
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -169,7 +177,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Real-time Map View"
                                 android:textStyle="bold"
-                                android:textColor="#333333"/>
+                                android:textColor="#000000"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -185,7 +193,9 @@
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp">
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#EEEEEE">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -196,7 +206,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@android:drawable/ic_menu_directions"
-                            app:tint="#d1bb9b" />
+                            app:tint="#759EA5" />
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -207,7 +217,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Navigate with Ease"
                                 android:textStyle="bold"
-                                android:textColor="#333333"/>
+                                android:textColor="#000000"/>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -227,11 +237,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
+        app:elevation="0dp"
+        app:itemIconTint="#000000"
+        app:itemTextColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:menu="@menu/bottom_nav_menu" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

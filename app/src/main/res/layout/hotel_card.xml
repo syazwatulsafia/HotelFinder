@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:layout_gravity="bottom"
-    card_view:cardCornerRadius="12dp"
-    card_view:cardElevation="6dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_border"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="20dp">
 
-        <!-- Hotel Name -->
         <TextView
             android:id="@+id/tvHotelName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hotel Name"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:fontFamily="sans-serif-black"
+            android:text="The Grand Hotel"
+            android:textColor="#000000"
+            android:textSize="20sp" />
 
-        <!-- Hotel Distance -->
-        <TextView
-            android:id="@+id/tvHotelDistance"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Distance: 1.2 km"
-            android:layout_marginTop="4dp"
-            android:textSize="14sp"
-            android:textColor="#555555" />
+            android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <!-- Select Button -->
-        <Button
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_mylocation"
+                app:tint="#759EA5" />
+
+            <TextView
+                android:id="@+id/tvHotelDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="1.2 km away"
+                android:textColor="#777777"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#E8DFD1"
-            android:textColor="#333333"/>
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#759EA5"
+            android:fontFamily="sans-serif-bold"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0.1"
+            android:text="SELECT HOTEL"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:cornerRadius="28dp" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

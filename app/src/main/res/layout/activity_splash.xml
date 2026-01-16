@@ -2,11 +2,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:background="#fff6f3">
+    android:background="#FFFFFF">
 
-    <ImageView
-        android:layout_width="348dp"
-        android:layout_height="675dp"
-        android:src="@drawable/hotel_logo" />
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>

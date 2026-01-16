@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(android.graphics.Color.parseColor("#759ea5"));// link color
+                ds.setColor(android.graphics.Color.parseColor("#759ea5"));//
                 ds.setUnderlineText(false);
                 ds.setFakeBoldText(true);
             }

@@ -6,14 +6,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff6f3"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="154dp"
-        android:layout_height="192dp"
-        android:layout_marginTop="60dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="80dp"
         android:contentDescription="App Logo"
         android:src="@drawable/logo_round"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,10 +24,12 @@
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Find hotels near you easily"
-        android:textColor="#d1bb9b"
-        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:text="FIND HOTELS NEAR YOU EASILY"
+        android:textColor="#759EA5"
+        android:textSize="12sp"
+        android:letterSpacing="0.1"
+        android:fontFamily="sans-serif-black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imgLogo" />
@@ -35,20 +37,19 @@
     <EditText
         android:id="@+id/editEmail"
         android:layout_width="0dp"
-        android:layout_height="55dp"
+        android:layout_height="56dp"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/rounded_edittext"
-        android:drawablePadding="10dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/edit_text_border"
+        android:drawablePadding="12dp"
         android:drawableStart="@android:drawable/ic_dialog_email"
-
-        android:drawableTint="#FFFFFF"
-
+        app:drawableTint="#759EA5"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:padding="16dp"
-        android:textColor="#302f2f"
-        android:textColorHint="#a0815c"
+        android:textColor="#000000"
+        android:textColorHint="#AAAAAA"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
@@ -58,10 +59,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         app:hintEnabled="false"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="#d1bb9b"
+        app:passwordToggleTint="#759EA5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editEmail">
@@ -69,18 +70,17 @@
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="@drawable/rounded_edittext"
-            android:drawablePadding="10dp"
+            android:layout_height="56dp"
+            android:background="@drawable/edit_text_border"
+            android:drawablePadding="12dp"
             android:drawableStart="@android:drawable/ic_lock_lock"
-
-            android:drawableTint="#d1bb9b"
-
+            app:drawableTint="#759EA5"
             android:hint="Password"
             android:inputType="textPassword"
             android:padding="16dp"
-            android:textColor="#302f2f"
-            android:textColorHint="#a0815c" />
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            android:textSize="15sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -90,39 +90,43 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Forgot Password?"
-        android:textColor="#759ea5"
+        android:textColor="#759EA5"
+        android:textSize="13sp"
         android:textStyle="bold"
         android:padding="8dp"
         android:onClick="forgotPassword"
         app:layout_constraintEnd_toEndOf="@id/passwordLayout"
         app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/rounded_button"
-        android:elevation="6dp"
+        android:layout_marginTop="48dp"
         android:onClick="loginUser"
         android:text="LOGIN"
-        android:textAllCaps="false"
-        android:textColor="#fff6f3"
-        android:textSize="18sp"
+        android:textAllCaps="true"
+        android:letterSpacing="0.1"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="#000000"
+        app:cornerRadius="30dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordLayout" />
+        app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
     <TextView
         android:id="@+id/tvRegisterHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Dont have an account? Sign Up"
-        android:textColor="@color/black"
+        android:layout_marginTop="32dp"
+        android:text="Don't have an account? Sign Up"
+        android:textColor="#000000"
         android:textSize="14sp"
-        android:textIsSelectable="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnLogin" />

@@ -1,22 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3"
-    android:padding="24dp">
+    android:background="#FFFFFF"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:padding="24dp">
 
         <ImageView
             android:id="@+id/btn_back_arrow"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="start"
-            android:padding="8dp"
+            android:padding="12dp"
             android:src="@drawable/back_button"
             app:tint="#000000"
             android:contentDescription="Back" />
@@ -24,11 +26,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="How was your stay?"
-            android:textSize="26sp"
+            android:text="HOW WAS YOUR STAY?"
+            android:textSize="18sp"
             android:textColor="#000000"
-            android:fontFamily="sans-serif-light"
-            android:layout_marginTop="20dp" />
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="0.1"
+            android:textAllCaps="true"
+            android:layout_marginTop="24dp" />
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -36,25 +40,37 @@
             android:layout_height="wrap_content"
             android:numStars="5"
             android:rating="0"
-            android:stepSize="0.5"
-            android:isIndicator="false"
-            android:progressTint="#000000"
-            android:layout_gravity="center"
+            android:stepSize="1"
+            android:progressTint="#FFD700"
+            android:progressBackgroundTint="#E0E0E0"
+            android:secondaryProgressTint="#FFD700"
             android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Photo"
+            android:textSize="12sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:layout_gravity="start"
+            android:layout_marginBottom="12dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="180dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
-            android:layout_marginBottom="20dp">
+            app:cardBackgroundColor="#F8F8F8">
 
             <ImageButton
                 android:id="@+id/btn_add_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_plus_sign"
-                android:background="#F0EAE8"
+                android:background="?attr/selectableItemBackground"
+                app:tint="#759EA5"
                 android:scaleType="centerInside" />
         </androidx.cardview.widget.CardView>
 
@@ -62,16 +78,16 @@
             android:id="@+id/et_comment"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:hint="Write your review..."
+            android:hint="Tell us about your experience..."
             android:gravity="top"
             android:padding="16dp"
             android:maxLength="250"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:inputType="textMultiLine"
             android:textColor="#000000"
-            android:textColorHint="#80000000"
-            android:background="@android:drawable/edit_text"
-            android:backgroundTint="#FFFFFF" />
+            android:textColorHint="#AAAAAA"
+            android:textSize="15sp"
+            android:background="@drawable/edit_text_border" />
 
         <TextView
             android:id="@+id/tvCharCount"
@@ -79,21 +95,24 @@
             android:layout_height="wrap_content"
             android:text="0 / 250"
             android:layout_gravity="end"
-            android:textColor="#80000000"
+            android:textColor="#AAAAAA"
             android:textSize="11sp"
-            android:layout_marginTop="6dp" />
+            android:layout_marginTop="8dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="40dp"
-            android:text="SUBMIT"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="24dp"
+            android:text="Submit Review"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:letterSpacing="0.1"
-            android:background="#000000" />
+            android:backgroundTint="#000000"
+            app:cornerRadius="30dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
 
     </LinearLayout>
 </ScrollView>

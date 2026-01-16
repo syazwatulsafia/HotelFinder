@@ -181,7 +181,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void showMenu() {
         PopupMenu popupMenu = new PopupMenu(this, btnMenu);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_user_profile, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.user_profile_menu, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();

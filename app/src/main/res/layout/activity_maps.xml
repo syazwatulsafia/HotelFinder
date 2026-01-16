@@ -4,95 +4,122 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3">
+    android:background="#FFFFFF">
 
-    <!-- 🔹 TOP BAR -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#FFF6F3"
-        android:elevation="4dp">
+        android:layout_height="64dp"
+        android:background="#FFFFFF">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nearby Hotels"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEARBY HOTELS"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.2"
+                android:textAllCaps="true"
+                android:textColor="#000000" />
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height="3dp"
+                android:background="#759EA5"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
     </RelativeLayout>
 
-    <!-- Search Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
         android:orientation="horizontal"
-        android:background="#E8DFD1">
+        android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/etSearchLocation"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_weight="1"
-            android:hint="Search location"
+            android:hint="Search location..."
+            android:background="@drawable/edit_text_border"
+            android:paddingHorizontal="16dp"
+            android:textSize="14sp"
             android:imeOptions="actionSearch"
             android:singleLine="true"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSearchLocation"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:backgroundTint="#FFF6F3"/>
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:text="GO"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:backgroundTint="#000000"
+            app:cornerRadius="25dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"/>
     </LinearLayout>
 
-    <!-- 🔹 MAP + BOTTOM SHEET -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#FFF6F3">
+        android:layout_weight="1">
 
-        <!-- Google Map Fragment -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Bottom Sheet (starts at bottom) -->
         <LinearLayout
             android:id="@+id/bottomSheet"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:elevation="8dp"
-            android:padding="8dp"
-            android:layout_gravity="bottom"
-            android:backgroundTint="#FFF6F3"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+            android:background="#FFFFFF"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="bottom">
 
-            <!-- RecyclerView inside Bottom Sheet -->
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:background="#EEEEEE" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHotels"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingHorizontal="12dp"
                 android:orientation="horizontal"/>
         </LinearLayout>
-
     </FrameLayout>
-    <!-- BOTTOM NAVIGATION -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:elevation="0dp"
+        app:itemIconTint="#000000"
+        app:itemTextColor="#000000"
         app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>

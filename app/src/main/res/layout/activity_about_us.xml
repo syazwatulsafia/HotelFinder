@@ -4,43 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF6F3"
+    android:background="#FFFFFF"
     tools:context=".AboutUsActivity">
 
-    <!-- BACK BUTTON -->
     <ImageView
         android:id="@+id/btn_back_arrow"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
         android:src="@drawable/back_button"
         app:tint="#000000"
         android:contentDescription="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"/>
 
-    <!-- TITLE BAR -->
     <TextView
         android:id="@+id/txtTitle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="About Us"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:padding="16dp"
-        android:paddingStart="56dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="ABOUT US"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-black"
+        android:letterSpacing="0.2"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="@id/btn_back_arrow"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- SCROLLABLE CONTENT AREA -->
+    <View
+        android:id="@+id/topDivider"
+        android:layout_width="40dp"
+        android:layout_height="3dp"
+        android:background="#759EA5"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintStart_toStartOf="@id/txtTitle"
+        app:layout_constraintEnd_toEndOf="@id/txtTitle"/>
+
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/topDivider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -50,94 +58,97 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:padding="24dp">
+            android:padding="32dp">
 
-            <!-- LOGO -->
             <ImageView
                 android:id="@+id/ivLogo"
-                android:layout_width="151dp"
-                android:layout_height="179dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:src="@drawable/hotel_logo"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- APP TITLE -->
             <TextView
                 android:id="@+id/tvAboutTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="About Roomly"
-                android:textColor="#333333"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:text="Roomly"
+                android:textColor="#000000"
+                android:textSize="32sp"
+                android:fontFamily="sans-serif-medium"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- DESCRIPTION -->
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Roomly is your ultimate companion for finding the perfect hotel stay. We provide seamless navigation and authentic reviews to ensure your journey is comfortable and stress-free."
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"
+                android:text="Your ultimate companion for finding the perfect hotel stay. We provide seamless navigation and authentic reviews to ensure your journey is comfortable."
+                android:textColor="#555555"
+                android:textSize="15sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="40dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#EEEEEE"
                 android:layout_marginBottom="32dp"/>
 
-            <!-- CONTACT HEADING -->
             <TextView
-                android:id="@+id/tvContactHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="For more information, contact us at:"
+                android:text="CONTACT"
                 android:textColor="#759EA5"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp"/>
+                android:letterSpacing="0.1"
+                android:textSize="13sp"
+                android:layout_marginBottom="12dp"/>
 
-            <!-- EMAIL -->
             <TextView
                 android:id="@+id/tvEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:autoLink="email"
                 android:text="support@roomly.com"
-                android:textColor="#333333"
+                android:textColor="#000000"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- PHONE -->
             <TextView
                 android:id="@+id/tvPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:autoLink="phone"
                 android:text="+60 12-345 6789"
-                android:textColor="#333333"
+                android:textColor="#000000"
                 android:textSize="16sp"
-                android:layout_marginBottom="32dp"/>
+                android:layout_marginBottom="40dp"/>
 
-            <!-- FEEDBACK HEADING -->
-            <TextView
-                android:id="@+id/tvFeedback"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Any feedback can fill this form"
-                android:textColor="#759EA5"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp"/>
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center">
 
-            <!-- FORM LINK -->
-            <TextView
-                android:id="@+id/tvFormLink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="web"
-                android:text="https://forms.gle/cdKNAAb38U8bqHs69"
-                android:textColor="#759EA5"
-                android:textSize="16sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HAVE FEEDBACK?"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvFormLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open Feedback Form"
+                    android:textColor="#759EA5"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:autoLink="web"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
