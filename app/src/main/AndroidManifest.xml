@@ -61,7 +61,6 @@
         <activity android:name=".HotelDetailActivity" android:exported="false" />
 
         <activity android:name=".ListReviewActivity" android:exported="false" />
-        <activity android:name=".ReviewSuccessActivity" android:exported="false" />
         <activity
             android:name=".CreateReviewActivity"
             android:exported="false"
