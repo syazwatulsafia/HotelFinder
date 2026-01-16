@@ -117,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
+                        startActivity(new Intent(RegisterActivity.this, HomePage.class));
                         finish();
                     } else {
                         String errorMessage = task.getException() != null

@@ -188,6 +188,9 @@ public class UserProfileActivity extends AppCompatActivity {
             if (id == R.id.menu_edit_profile) {
                 startActivity(new Intent(this, EditProfileActivity.class));
                 return true;
+            }else if (id == R.id.menu_reminders) {
+                startActivity(new Intent(this, ReminderActivity.class));
+                return true;
             } else if (id == R.id.menu_about_us) {
                 startActivity(new Intent(this, AboutUsActivity.class));
                 return true;

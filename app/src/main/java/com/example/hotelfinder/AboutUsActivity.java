@@ -9,15 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AboutUsActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
 
-        ImageView btnBack = findViewById(R.id.btn_back_arrow);
-        btnBack.setOnClickListener(v -> finish());
+        // Initialize back button
+        ImageView btnBack = findViewById(R.id.btn_back_arrow);;
+        btnBack.setOnClickListener(v -> {
+            finish(); // Go back to previous activity
+        });
 
         TextView tvFormLink = findViewById(R.id.tvFormLink);
         tvFormLink.setOnClickListener(v -> {

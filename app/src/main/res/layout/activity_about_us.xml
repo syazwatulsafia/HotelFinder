@@ -5,108 +5,139 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF6F3"
-    android:padding="24dp">
+    tools:context=".AboutUsActivity">
 
+    <!-- BACK BUTTON -->
     <ImageView
         android:id="@+id/btn_back_arrow"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_gravity="start"
         android:padding="8dp"
         android:src="@drawable/back_button"
         app:tint="#000000"
-        android:contentDescription="Back" />
-
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="151dp"
-        android:layout_height="179dp"
-        android:layout_marginTop="162dp"
-        android:src="@drawable/hotel_logo"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"/>
 
+    <!-- TITLE BAR -->
     <TextView
-        android:id="@+id/tvAboutTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="About Roomly"
-        android:textColor="#333333"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivLogo" />
-
-    <TextView
-        android:id="@+id/tvDescription"
+        android:id="@+id/txtTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="Roomly is your ultimate companion for finding the perfect hotel stay. We provide seamless navigation and authentic reviews to ensure your journey is comfortable and stress-free."
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAboutTitle" />
-
-    <TextView
-        android:id="@+id/tvContactHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="For more information, contact us at:"
-        android:textColor="#759EA5"
+        android:text="About Us"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDescription" />
-
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:autoLink="email"
-        android:text="support@roomly.com"
         android:textColor="#333333"
+        android:padding="16dp"
+        android:paddingStart="56dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvContactHeading" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
-        android:id="@+id/tvPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:autoLink="phone"
-        android:text="+60 12-345 6789"
-        android:textColor="#333333"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEmail" />
-
-    <TextView
-        android:id="@+id/tvFeedback"
+    <!-- SCROLLABLE CONTENT AREA -->
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Any feedback can fill this form"
-        android:textColor="#759EA5"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvPhone" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/tvFormLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:autoLink="web"
-        android:text="https://forms.gle/cdKNAAb38U8bqHs69"
-        android:textColor="#759EA5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvFeedback" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp">
+
+            <!-- LOGO -->
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="151dp"
+                android:layout_height="179dp"
+                android:src="@drawable/hotel_logo"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- APP TITLE -->
+            <TextView
+                android:id="@+id/tvAboutTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About Roomly"
+                android:textColor="#333333"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- DESCRIPTION -->
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Roomly is your ultimate companion for finding the perfect hotel stay. We provide seamless navigation and authentic reviews to ensure your journey is comfortable and stress-free."
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="32dp"/>
+
+            <!-- CONTACT HEADING -->
+            <TextView
+                android:id="@+id/tvContactHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="For more information, contact us at:"
+                android:textColor="#759EA5"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- EMAIL -->
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="email"
+                android:text="support@roomly.com"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- PHONE -->
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="phone"
+                android:text="+60 12-345 6789"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:layout_marginBottom="32dp"/>
+
+            <!-- FEEDBACK HEADING -->
+            <TextView
+                android:id="@+id/tvFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Any feedback can fill this form"
+                android:textColor="#759EA5"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- FORM LINK -->
+            <TextView
+                android:id="@+id/tvFormLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="web"
+                android:text="https://forms.gle/cdKNAAb38U8bqHs69"
+                android:textColor="#759EA5"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
