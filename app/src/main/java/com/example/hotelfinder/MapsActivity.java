@@ -61,7 +61,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize Map
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -109,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateMapAndSearch() {
         if (mMap != null && currentLatLng != null) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-            drawRangeCircle(currentLatLng, 1000);
+            drawRangeCircle(currentLatLng, 2000);
             searchNearbyHotels();
         }
     }
@@ -121,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .center(center)
                 .radius(radiusMeters)
                 .strokeWidth(5f)
-                .strokeColor(0xFF759EA5) // Brand Teal
+                .strokeColor(0xFF759EA5)
                 .fillColor(0x22759EA5));
     }
 
@@ -179,12 +178,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding.rvHotels.setLayoutManager(layoutManager);
         binding.rvHotels.setAdapter(hotelAdapter);
 
-        // --- SNAP TO CENTER LOGIC ---
         SnapHelper snapHelper = new PagerSnapHelper();
         binding.rvHotels.setOnFlingListener(null);
         snapHelper.attachToRecyclerView(binding.rvHotels);
 
-        // --- AUTO-MOVE MAP ON SWIPE ---
         binding.rvHotels.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

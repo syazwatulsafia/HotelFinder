@@ -42,29 +42,23 @@ public class ListReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_review);
 
-        // GET HOTEL INFO
         hotelName = getIntent().getStringExtra("hotelName");
         hotelAddress = getIntent().getStringExtra("hotelAddress");
         lat = getIntent().getDoubleExtra("lat", 0);
         lng = getIntent().getDoubleExtra("lng", 0);
 
-        // INIT UI
         btnBack = findViewById(R.id.btn_back_arrow);
         txtTitle = findViewById(R.id.txtTitle);
         recyclerView = findViewById(R.id.recyclerView);
         fabAddReview = findViewById(R.id.fab_add_review);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Set Title to Hotel Name
         txtTitle.setText(hotelName != null ? hotelName : "Reviews");
 
         btnBack.setOnClickListener(v -> finish());
 
-        // RECYCLER VIEW
         reviewList = new ArrayList<>();
 
-        // NOTE: Ensure your ReviewAdapter uses the 'cutoff' logic
-        // inside its onBindViewHolder method to display the reviewer's name.
         adapter = new ReviewAdapter(reviewList, false, null);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -88,7 +82,7 @@ public class ListReviewActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        bottomNavigationView.setSelectedItemId(R.id.nav_home); // Usually reviews are accessed from Home
+        bottomNavigationView.setSelectedItemId(R.id.nav_maps);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -112,7 +106,6 @@ public class ListReviewActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
-        // Query reviews that match this specific hotel name
         reviewRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -122,12 +115,12 @@ public class ListReviewActivity extends AppCompatActivity {
 
                     if (review != null && review.hotelName != null && review.hotelName.equals(hotelName)) {
 
-                        // 🔹 APPLY CUTOFF LOGIC TO THE REVIEWER NAME BEFORE ADDING TO LIST
+
                         if (review.userEmail != null && review.userEmail.contains("@")) {
                             String cleanName = review.userEmail.split("@")[0].replaceAll("[0-9]", "");
                             if (!cleanName.isEmpty()) {
                                 cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1);
-                                review.userEmail = cleanName; // Temporarily overwrite for display
+                                review.userEmail = cleanName;
                             }
                         }
 

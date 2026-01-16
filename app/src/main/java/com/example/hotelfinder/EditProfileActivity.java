@@ -24,33 +24,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class EditProfileActivity extends AppCompatActivity {
 
     private ImageView imgProfile;
     private EditText edtEmail, edtPassword;
     private Button btnSave;
-
     private FirebaseUser user;
     private DatabaseReference userRef;
-
     private Uri selectedImageUri;
 
-    // IMAGE PICKER
     private final ActivityResultLauncher<String> imagePicker =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
                     selectedImageUri = uri;
-
-                    // Show immediately
-                    Glide.with(this)
-                            .load(uri)
-                            .circleCrop()
-                            .into(imgProfile);
+                    Glide.with(this).load(uri).circleCrop().into(imgProfile);
                 }
             });
 
-    // PERMISSION LAUNCHER
     private final ActivityResultLauncher<String> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     granted -> {
@@ -69,107 +62,81 @@ public class EditProfileActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSaveProfile);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            finish();
-            return;
-        }
+        if (user == null) { finish(); return; }
 
         userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
-        // EMAIL DISPLAY ONLY
         edtEmail.setText(user.getEmail());
         edtEmail.setEnabled(false);
         edtEmail.setAlpha(0.6f);
 
-        // ✅ LOAD PROFILE IMAGE USING photoUri (REALTIME)
         loadProfilePhoto();
 
-        // Pick photo
         imgProfile.setOnClickListener(v -> checkPermission());
-
-        // Save
         btnSave.setOnClickListener(v -> saveProfile());
 
-        ImageView btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
-
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
     private void loadProfilePhoto() {
-        userRef.child("photoUri")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String photoUri = snapshot.getValue(String.class);
-
-                        if (photoUri != null && !photoUri.isEmpty()) {
-                            Glide.with(EditProfileActivity.this)
-                                    .load(Uri.parse(photoUri))
-                                    .placeholder(R.drawable.ic_profile_placeholder)
-                                    .circleCrop()
-                                    .into(imgProfile);
-                        } else {
-                            imgProfile.setImageResource(R.drawable.ic_profile_placeholder);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(EditProfileActivity.this,
-                                "Failed to load profile photo",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        userRef.child("photoUri").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
+                String photoUri = snapshot.getValue(String.class);
+                if (photoUri != null && !photoUri.isEmpty()) {
+                    Glide.with(getApplicationContext())
+                            .load(photoUri)
+                            .placeholder(R.drawable.ic_profile_placeholder)
+                            .circleCrop()
+                            .into(imgProfile);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
     private void checkPermission() {
-        if (Build.VERSION.SDK_INT >= 33) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
-                    == PackageManager.PERMISSION_GRANTED) {
-                imagePicker.launch("image/*");
-            } else {
-                permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
-            }
+        String permission = (Build.VERSION.SDK_INT >= 33) ?
+                Manifest.permission.READ_MEDIA_IMAGES : Manifest.permission.READ_EXTERNAL_STORAGE;
+
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            imagePicker.launch("image/*");
         } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                imagePicker.launch("image/*");
-            } else {
-                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
-            }
+            permissionLauncher.launch(permission);
         }
     }
 
     private void saveProfile() {
         btnSave.setEnabled(false);
-        btnSave.setText("Saving...");
+        btnSave.setText("Uploading...");
 
         String newPassword = edtPassword.getText().toString().trim();
-
-        // ✅ Password optional
         if (!newPassword.isEmpty()) {
-            user.updatePassword(newPassword)
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this,
-                                    "Password update failed: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show());
+            user.updatePassword(newPassword);
         }
 
-        // ✅ Photo optional
         if (selectedImageUri != null) {
-            userRef.child("photoUri")
-                    .setValue(selectedImageUri.toString())
-                    .addOnSuccessListener(unused -> {
-                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
+            // Upload to Firebase Storage
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference()
+                    .child("profile_photos/" + user.getUid() + ".jpg");
+
+            storageRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Save the Download URL (HTTPS) to Database
+                        userRef.child("photoUri").setValue(uri.toString())
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Saved successfully!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                });
+                    }))
                     .addOnFailureListener(e -> {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Changes");
-                        Toast.makeText(this, "Failed to update photo", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
                     });
         } else {
-            Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
             finish();
         }
     }

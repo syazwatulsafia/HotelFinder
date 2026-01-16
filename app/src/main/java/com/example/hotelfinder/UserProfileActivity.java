@@ -97,6 +97,9 @@ public class UserProfileActivity extends AppCompatActivity {
         if (email != null && email.contains("@")) {
             String name = email.split("@")[0];
             name = name.replaceAll("[0-9]", "");
+            txtEmail.setText(name);
+        } else if (email != null) {
+            txtEmail.setText(email);
         }
     }
 

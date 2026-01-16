@@ -40,8 +40,8 @@
             android:layout_height="wrap_content"
             android:numStars="5"
             android:rating="0"
-            android:stepSize="1"
-            android:progressTint="#FFD700"
+            android:stepSize="0.5"
+            android:progressTint="#FFAC33"
             android:progressBackgroundTint="#E0E0E0"
             android:secondaryProgressTint="#FFD700"
             android:layout_marginTop="16dp" />
@@ -70,7 +70,6 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_plus_sign"
                 android:background="?attr/selectableItemBackground"
-                app:tint="#759EA5"
                 android:scaleType="centerInside" />
         </androidx.cardview.widget.CardView>
 
