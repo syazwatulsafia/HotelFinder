@@ -15,8 +15,8 @@ import java.util.Locale;
 public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHolder> {
 
     public interface OnHotelClickListener {
-        void onHotelSelected(Hotel hotel); // for Select button
-        void onHotelFocused(Hotel hotel);  // for scrolling/focusing
+        void onHotelSelected(Hotel hotel);
+        void onHotelFocused(Hotel hotel);
     }
 
     private final List<Hotel> hotelList;
@@ -45,10 +45,8 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelViewHol
                 String.format(Locale.getDefault(), "%.2f km", hotel.distance)
         );
 
-        // Select button → open detail page
         holder.btnSelect.setOnClickListener(v -> listener.onHotelSelected(hotel));
 
-        // Focus map when card becomes visible
         holder.itemView.addOnLayoutChangeListener(
                 (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
                         listener.onHotelFocused(hotel)

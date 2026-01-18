@@ -5,8 +5,8 @@ public class Hotel {
     public String name;
     public String address;
     public LatLng location;
-    public float distance; //in meters
-    public String photoReference; // new field
+    public float distance;
+    public String photoReference;
     public String phoneNumber;
     public String placeId;
 
@@ -17,6 +17,6 @@ public class Hotel {
         this.distance = distance;
         this.photoReference = photoReference;
         this.placeId = placeId;
-        this.phoneNumber = null; // will fetch later
+        this.phoneNumber = null;
     }
 }

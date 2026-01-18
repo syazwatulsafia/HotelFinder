@@ -27,7 +27,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     private OnDeleteClickListener deleteListener;
     private boolean showDelete;
 
-    // ✅ Constructor
     public ReviewAdapter(List<Review> reviewList,
                          boolean showDelete,
                          OnDeleteClickListener listener) {
@@ -49,14 +48,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
         Review review = reviewList.get(position);
 
-        // 🔹 Bind data
         holder.txtUserEmail.setText(review.userEmail);
         holder.txtHotelName.setText(review.hotelName);
         holder.txtHotelAddress.setText(review.hotelAddress);
         holder.txtComment.setText(review.comment);
         holder.ratingBar.setRating(review.rating);
 
-        // 🔹 Review image (if exists)
         if (review.imageUri != null && !review.imageUri.isEmpty()) {
             holder.imgReview.setVisibility(View.VISIBLE);
             Glide.with(holder.itemView.getContext())
@@ -66,7 +63,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             holder.imgReview.setVisibility(View.GONE);
         }
 
-        // 🔹 Hotel click → detail
         holder.txtHotelName.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), HotelDetailActivity.class);
             intent.putExtra("name", review.hotelName);
@@ -76,7 +72,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             v.getContext().startActivity(intent);
         });
 
-        // 🔹 Delete button (UserProfileActivity only)
         if (showDelete) {
             holder.btnDelete.setVisibility(View.VISIBLE);
 
@@ -97,7 +92,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             holder.btnDelete.setVisibility(View.GONE);
         }
 
-// LOAD USER PROFILE IMAGE
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
                 .child(review.userId)
@@ -114,7 +108,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                             .into(holder.imgUserProfile);
                 } else {
                     holder.imgUserProfile.setImageResource(
-                            R.drawable.ic_profile_placeholder);
+                            R.drawable.profile);
                 }
             }
         });
@@ -126,7 +120,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         return reviewList.size();
     }
 
-    // 🔹 ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtUserEmail, txtHotelName, txtHotelAddress, txtComment;
@@ -150,7 +143,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         }
     }
 
-    // 🔹 Delete interface
     public interface OnDeleteClickListener {
         void onDelete(Review review);
     }

@@ -53,7 +53,6 @@ public class CreateReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_review);
 
-        // GET HOTEL INFO
         hotelName = getIntent().getStringExtra("hotelName");
         hotelAddress = getIntent().getStringExtra("hotelAddress");
         lat = getIntent().getDoubleExtra("lat", 0);
@@ -195,7 +194,6 @@ public class CreateReviewActivity extends AppCompatActivity {
         review.put("comment", comment);
         review.put("timestamp", System.currentTimeMillis());
 
-        // ✅ matches Review.java field name
         if (selectedImageUri != null) {
             review.put("imageUri", selectedImageUri.toString());
         }

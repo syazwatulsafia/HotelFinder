@@ -51,7 +51,6 @@ public class ReminderActivity extends AppCompatActivity {
             selectedCalendar.set(Calendar.SECOND, 0);
             selectedCalendar.set(Calendar.MILLISECOND, 0);
 
-            // 2. Validate and Vibrate if invalid
             if (selectedCalendar.before(Calendar.getInstance())) {
                 vibrateError();
                 Toast.makeText(this, "Please select a time in the future!", Toast.LENGTH_SHORT).show();

@@ -164,7 +164,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onHotelSelected(Hotel hotel) {
                 Intent intent = new Intent(MapsActivity.this, HotelDetailActivity.class);
+
                 intent.putExtra("placeId", hotel.placeId);
+                intent.putExtra("hotelName", hotel.name);
+                intent.putExtra("hotelAddress", hotel.address);
+                intent.putExtra("lat", hotel.location.latitude);
+                intent.putExtra("lng", hotel.location.longitude);
                 startActivity(intent);
             }
 

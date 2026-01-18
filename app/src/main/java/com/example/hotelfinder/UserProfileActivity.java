@@ -120,7 +120,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             .circleCrop()
                             .into(imgUser);
                 } else {
-                    imgUser.setImageResource(R.drawable.ic_profile_placeholder);
+                    imgUser.setImageResource(R.drawable.profile);
                 }
             }
 

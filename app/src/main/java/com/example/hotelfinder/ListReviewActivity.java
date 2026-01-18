@@ -2,8 +2,11 @@ package com.example.hotelfinder;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,8 @@ import java.util.List;
 
 public class ListReviewActivity extends AppCompatActivity {
 
+    private static final String TAG = "ListReviewActivity";
+
     RecyclerView recyclerView;
     ImageView btnBack;
     TextView txtTitle;
@@ -30,7 +35,6 @@ public class ListReviewActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
 
     DatabaseReference reviewRef;
-
     List<Review> reviewList;
     ReviewAdapter adapter;
 
@@ -54,21 +58,16 @@ public class ListReviewActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         txtTitle.setText(hotelName != null ? hotelName : "Reviews");
-
         btnBack.setOnClickListener(v -> finish());
 
         reviewList = new ArrayList<>();
-
         adapter = new ReviewAdapter(reviewList, false, null);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // FIREBASE
         reviewRef = FirebaseDatabase.getInstance().getReference("reviews");
         loadReviews();
 
-        // ADD REVIEW BUTTON
         fabAddReview.setOnClickListener(v -> {
             Intent intent = new Intent(ListReviewActivity.this, CreateReviewActivity.class);
             intent.putExtra("hotelName", hotelName);
@@ -81,20 +80,56 @@ public class ListReviewActivity extends AppCompatActivity {
         setupBottomNavigation();
     }
 
+    private void loadReviews() {
+        reviewRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                reviewList.clear();
+
+                if (!snapshot.exists()) {
+                    Log.d(TAG, "No reviews found in the 'reviews' node.");
+                    adapter.notifyDataSetChanged();
+                    return;
+                }
+
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    Review review = ds.getValue(Review.class);
+
+                    if (review != null && review.hotelName != null && hotelName != null) {
+                        if (review.hotelName.trim().equalsIgnoreCase(hotelName.trim())) {
+
+                            if (review.userEmail != null && review.userEmail.contains("@")) {
+                                String cleanName = review.userEmail.split("@")[0].replaceAll("[0-9]", "");
+                                if (!cleanName.isEmpty()) {
+                                    cleanName = cleanName.substring(0, 1) + cleanName.substring(1);
+                                    review.userEmail = cleanName;
+                                }
+                            }
+                            reviewList.add(review);
+                        }
+                    }
+                }
+
+                Log.d(TAG, "Added " + reviewList.size() + " reviews for hotel: " + hotelName);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Database Error: " + error.getMessage());
+                Toast.makeText(ListReviewActivity.this, "Error loading reviews", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void setupBottomNavigation() {
         bottomNavigationView.setSelectedItemId(R.id.nav_maps);
-
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             Intent intent = null;
-
-            if (id == R.id.nav_home) {
-                intent = new Intent(this, HomePage.class);
-            } else if (id == R.id.nav_maps) {
-                intent = new Intent(this, MapsActivity.class);
-            } else if (id == R.id.nav_profile) {
-                intent = new Intent(this, UserProfileActivity.class);
-            }
+            if (id == R.id.nav_home) intent = new Intent(this, HomePage.class);
+            else if (id == R.id.nav_maps) intent = new Intent(this, MapsActivity.class);
+            else if (id == R.id.nav_profile) intent = new Intent(this, UserProfileActivity.class);
 
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -102,36 +137,6 @@ public class ListReviewActivity extends AppCompatActivity {
                 return true;
             }
             return false;
-        });
-    }
-
-    private void loadReviews() {
-        reviewRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                reviewList.clear();
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Review review = ds.getValue(Review.class);
-
-                    if (review != null && review.hotelName != null && review.hotelName.equals(hotelName)) {
-
-
-                        if (review.userEmail != null && review.userEmail.contains("@")) {
-                            String cleanName = review.userEmail.split("@")[0].replaceAll("[0-9]", "");
-                            if (!cleanName.isEmpty()) {
-                                cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1);
-                                review.userEmail = cleanName;
-                            }
-                        }
-
-                        reviewList.add(review);
-                    }
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 }

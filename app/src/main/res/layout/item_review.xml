@@ -9,7 +9,6 @@
     android:layout_marginBottom="12dp"
     android:elevation="2dp">
 
-    <!-- USER PROFILE IMAGE (LEFT, X-style) -->
     <androidx.cardview.widget.CardView
         android:layout_width="42dp"
         android:layout_height="42dp"
@@ -24,14 +23,12 @@
             android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
-    <!-- RIGHT CONTENT -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- USER EMAIL -->
         <TextView
             android:id="@+id/txtUserEmail"
             android:layout_width="wrap_content"
@@ -41,7 +38,6 @@
             android:textSize="14sp"
             android:textColor="#000000" />
 
-        <!-- HOTEL NAME -->
         <TextView
             android:id="@+id/txtHotelName"
             android:layout_width="match_parent"
@@ -52,7 +48,6 @@
             android:textColor="#333333"
             android:layout_marginTop="6dp" />
 
-        <!-- HOTEL ADDRESS -->
         <TextView
             android:id="@+id/txtHotelAddress"
             android:layout_width="match_parent"
@@ -62,7 +57,6 @@
             android:textColor="#777777"
             android:layout_marginBottom="6dp" />
 
-        <!-- RATING -->
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -76,7 +70,6 @@
             android:secondaryProgressTint="#FFC107"
             android:layout_marginTop="4dp" />
 
-        <!-- COMMENT -->
         <TextView
             android:id="@+id/txtComment"
             android:layout_width="match_parent"
@@ -86,7 +79,6 @@
             android:textColor="#444444"
             android:layout_marginTop="6dp" />
 
-        <!-- REVIEW IMAGE -->
         <ImageView
             android:id="@+id/imgReview"
             android:layout_width="match_parent"
@@ -95,7 +87,6 @@
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
-        <!-- DELETE BUTTON -->
         <Button
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"

@@ -50,6 +50,7 @@
                 android:layout_height="match_parent"
                 android:background="#F8F8F8"
                 android:scaleType="centerCrop" />
+
         </androidx.cardview.widget.CardView>
 
         <LinearLayout

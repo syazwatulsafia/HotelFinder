@@ -87,7 +87,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 if (photoUri != null && !photoUri.isEmpty()) {
                     Glide.with(getApplicationContext())
                             .load(photoUri)
-                            .placeholder(R.drawable.ic_profile_placeholder)
+                            .placeholder(R.drawable.profile)
                             .circleCrop()
                             .into(imgProfile);
                 }
@@ -118,13 +118,11 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         if (selectedImageUri != null) {
-            // Upload to Firebase Storage
             StorageReference storageRef = FirebaseStorage.getInstance().getReference()
                     .child("profile_photos/" + user.getUid() + ".jpg");
 
             storageRef.putFile(selectedImageUri)
                     .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        // Save the Download URL (HTTPS) to Database
                         userRef.child("photoUri").setValue(uri.toString())
                                 .addOnSuccessListener(unused -> {
                                     Toast.makeText(this, "Saved successfully!", Toast.LENGTH_SHORT).show();

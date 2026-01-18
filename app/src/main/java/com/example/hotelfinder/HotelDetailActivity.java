@@ -26,6 +26,9 @@ public class HotelDetailActivity extends AppCompatActivity {
     private Button btnCall, btnNavigate, btnSeeReview;
     private ImageView imgHotel, btnBack;
 
+    private String currentHotelName, currentHotelAddress, currentPlaceId;
+    private double currentLat, currentLng;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,20 +45,20 @@ public class HotelDetailActivity extends AppCompatActivity {
         btnSeeReview = findViewById(R.id.btnSeeReview);
         imgHotel = findViewById(R.id.imgHotel);
 
-        String name = getIntent().getStringExtra("name");
-        String address = getIntent().getStringExtra("address");
-        String placeId = getIntent().getStringExtra("placeId");
+        currentHotelName = getIntent().getStringExtra("hotelName");
+        currentHotelAddress = getIntent().getStringExtra("hotelAddress");
+        currentPlaceId = getIntent().getStringExtra("placeId");
         String photoRef = getIntent().getStringExtra("photoRef");
-        double lat = getIntent().getDoubleExtra("lat", 0);
-        double lng = getIntent().getDoubleExtra("lng", 0);
+        currentLat = getIntent().getDoubleExtra("lat", 0);
+        currentLng = getIntent().getDoubleExtra("lng", 0);
 
-        txtName.setText(name);
-        txtAddress.setText(address);
+        txtName.setText(currentHotelName != null ? currentHotelName : "Hotel Detail");
+        txtAddress.setText(currentHotelAddress != null ? currentHotelAddress : "");
 
         btnBack.setOnClickListener(v -> finish());
 
         btnNavigate.setOnClickListener(v -> {
-            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng + "&query_place_id=" + placeId);
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + currentLat + "," + currentLng + "&query_place_id=" + currentPlaceId);
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
             mapIntent.setPackage("com.google.android.apps.maps");
             startActivity(mapIntent);
@@ -63,10 +66,10 @@ public class HotelDetailActivity extends AppCompatActivity {
 
         btnSeeReview.setOnClickListener(v -> {
             Intent intent = new Intent(HotelDetailActivity.this, ListReviewActivity.class);
-            intent.putExtra("hotelName", name);
-            intent.putExtra("hotelAddress", address);
-            intent.putExtra("lat", lat);
-            intent.putExtra("lng", lng);
+            intent.putExtra("hotelName", currentHotelName);
+            intent.putExtra("hotelAddress", currentHotelAddress);
+            intent.putExtra("lat", currentLat);
+            intent.putExtra("lng", currentLng);
             startActivity(intent);
         });
 
@@ -75,19 +78,18 @@ public class HotelDetailActivity extends AppCompatActivity {
                     "?maxwidth=1200" +
                     "&photo_reference=" + photoRef +
                     "&key=" + API_KEY;
-
-            Glide.with(this).load(photoUrl).into(imgHotel);
+            Glide.with(this).load(photoUrl).placeholder(R.drawable.ic_profile_placeholder).into(imgHotel);
         }
 
-        if (placeId != null) {
-            fetchPlaceDetails(placeId);
+        if (currentPlaceId != null) {
+            fetchPlaceDetails(currentPlaceId);
         }
     }
 
     private void fetchPlaceDetails(String placeId) {
         String detailsUrl = "https://maps.googleapis.com/maps/api/place/details/json" +
                 "?place_id=" + placeId +
-                "&fields=formatted_phone_number,website,rating,user_ratings_total,opening_hours" +
+                "&fields=name,photos,formatted_address,formatted_phone_number,website,rating,user_ratings_total,opening_hours" +
                 "&key=" + API_KEY;
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -95,9 +97,33 @@ public class HotelDetailActivity extends AppCompatActivity {
                 response -> {
                     try {
                         JSONObject result = response.getJSONObject("result");
+                        if (result == null) return;
+
+                        currentHotelName = result.optString("name", currentHotelName);
+                        currentHotelAddress = result.optString("formatted_address", currentHotelAddress);
+                        txtName.setText(currentHotelName);
+                        txtAddress.setText(currentHotelAddress);
+
+                        if (result.has("photos")) {
+                            String photoReference = result.getJSONArray("photos")
+                                    .getJSONObject(0)
+                                    .getString("photo_reference");
+
+                            String photoUrl = "https://maps.googleapis.com/maps/api/place/photo" +
+                                    "?maxwidth=1200" +
+                                    "&photo_reference=" + photoReference +
+                                    "&key=" + API_KEY;
+
+                            Glide.with(this)
+                                    .load(photoUrl)
+                                    .placeholder(R.drawable.ic_profile_placeholder) // Use your placeholder
+                                    .error(R.drawable.ic_profile_placeholder)
+                                    .into(imgHotel);
+                        }
 
                         String phone = result.optString("formatted_phone_number", null);
                         if (phone != null) {
+                            btnCall.setVisibility(View.VISIBLE);
                             btnCall.setOnClickListener(v ->
                                     startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone))));
                         } else {
@@ -106,9 +132,11 @@ public class HotelDetailActivity extends AppCompatActivity {
 
                         String website = result.optString("website", null);
                         if (website != null) {
-                            txtWebsite.setText("Visit Official Website");
+                            txtWebsite.setVisibility(View.VISIBLE);
                             txtWebsite.setOnClickListener(v ->
                                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(website))));
+                        } else {
+                            txtWebsite.setVisibility(View.GONE);
                         }
 
                         double rating = result.optDouble("rating", 0.0);

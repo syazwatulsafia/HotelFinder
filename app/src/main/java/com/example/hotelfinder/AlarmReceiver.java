@@ -15,7 +15,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         String channelId = "hotel_reminder_channel";
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // 1. Create the Notification Channel (Required for API 26+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     channelId,
@@ -26,7 +25,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             manager.createNotificationChannel(channel);
         }
 
-        // 2. Create an Intent to open the app when notification is clicked
         Intent tapIntent = new Intent(context, MainActivity.class);
         tapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -37,17 +35,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // 3. Build the Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.logo_round)
                 .setContentTitle("Hotel Booking Reminder")
                 .setContentText("Don't forget your upcoming hotel check-in!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER) // Helps system prioritize
-                .setContentIntent(pendingIntent) // Open app on click
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        // 4. Show the notification
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }

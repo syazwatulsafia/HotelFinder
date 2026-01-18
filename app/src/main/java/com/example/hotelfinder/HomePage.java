@@ -38,11 +38,11 @@ public class HomePage extends AppCompatActivity {
             return insets;
         });
 
-        // Firebase
+
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        // Welcome text
+
         TextView welcomeTitle = findViewById(R.id.textViewWelcome);
 
         if (user != null) {
@@ -59,11 +59,9 @@ public class HomePage extends AppCompatActivity {
             }
         }
 
-        // Bottom Navigation
         BottomNavigationView bottomNavigationView =
                 findViewById(R.id.bottom_navigation);
 
-        // Highlight Home icon
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -71,7 +69,6 @@ public class HomePage extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
-                // Already on Home
                 return true;
             }
             else if (id == R.id.nav_maps) {
