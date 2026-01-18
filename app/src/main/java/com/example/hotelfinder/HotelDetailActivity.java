@@ -78,7 +78,7 @@ public class HotelDetailActivity extends AppCompatActivity {
                     "?maxwidth=1200" +
                     "&photo_reference=" + photoRef +
                     "&key=" + API_KEY;
-            Glide.with(this).load(photoUrl).placeholder(R.drawable.ic_profile_placeholder).into(imgHotel);
+            Glide.with(this).load(photoUrl).placeholder(R.drawable.profile).into(imgHotel);
         }
 
         if (currentPlaceId != null) {
@@ -116,8 +116,8 @@ public class HotelDetailActivity extends AppCompatActivity {
 
                             Glide.with(this)
                                     .load(photoUrl)
-                                    .placeholder(R.drawable.ic_profile_placeholder) // Use your placeholder
-                                    .error(R.drawable.ic_profile_placeholder)
+                                    .placeholder(R.drawable.profile)
+                                    .error(R.drawable.profile)
                                     .into(imgHotel);
                         }
 
